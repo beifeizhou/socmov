@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
+{% load facebook_tags %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Django-NYC - Lab305.com Django and Facebook Connect Demo</title>
+{% facebook_js %}
+{% initialize_facebook_connect %}
+</head>
+
+<body>
+<div id='user'>
+{% if USER_LOGGED_IN %}
+    <table border='0'>
+    <tr>
+        <td>
+            Welcome {% show_facebook_first_name user %}  {% show_logout %} <br />
+            {% show_facebook_photo user %}
+        </td>
+    </tr>
+    </table>
+{% else %}
+<table border='0'>
+    <tr>
+    <td nowrap valign='middle' align='center'>
+      {% show_connect_button %}
+    </td>
+    </tr>
+</table>
+{% endif %}
+</div>
+{% if USER_LOGGED_IN %}
+<a href="/">Home</a> |
+<a href="/accounts/profile/">My Profile</a>
+{% endif %}
+
+{% block content %}
+<h1>Base HTML File - override content block</h1>
+{% endblock %}
+
+
+</body>
+</html>
