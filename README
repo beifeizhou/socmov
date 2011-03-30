@@ -7,4 +7,4 @@ Facebook and uses data about movies from TMDB API.
 Requirements:
  - Python
  - PyMVPA ( Use the one at https://github.com/PyMVPA/PyMVPA )
- - 
+ - TMDB Wrapper (https://github.com/doganaydin/themoviedb)

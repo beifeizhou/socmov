@@ -128,6 +128,7 @@ for i in xrange(len(testres)):
 y, n = 0, 0
 fpos, fneg = 0, 0
 fpos2, fneg2 = 0, 0
+falsepos, falseneg = 0
 for i in xrange(len(testres)):
 	if svmres[i] == 'T':
 			fpos+=1
@@ -141,9 +142,16 @@ for i in xrange(len(testres)):
 		y += 1
 	else:
 		n += 1
+		
+		if svmres[i] == 'T':
+			falsepos += 1
+		else
+			falseneg += 1
+		
 
 print "error rate is ", n / (y + n*1.0) * 100.
 #print n1 / (y1 + n1*1.0) * 100.
 #print n2 / (y2 + n2*1.0) * 100.
 print fpos, fneg
 print fpos2, fneg2
+print falsepos, falseneg
