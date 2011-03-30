@@ -1,0 +1,6 @@
+A social movie recommendation engine
+Authors: Pratik Tandel, Krunal Manik
+
+A SVM-based recommendation engine that uses data from the social graph on 
+Facebook and uses data about movies from TMDB API.
+
