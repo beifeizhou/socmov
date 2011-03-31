@@ -19,6 +19,7 @@ def show(request):
 	cookie = facebook.get_user_from_cookie(	request.COOKIES,
 											FACEBOOK_API_KEY,
 											FACEBOOK_SECRET_KEY)
+	profile = {}
 	#print request.COOKIES
 	if cookie:
 		# Store a local instance of the user data so we don't need
@@ -29,5 +30,5 @@ def show(request):
 		print profile
 		#check on the development console
 	
-	return render_to_response('show.html')
+	return render_to_response('show.html', {"user": profile} )
 

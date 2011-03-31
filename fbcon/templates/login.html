@@ -10,10 +10,18 @@
             appId:'188365901207571', cookie:true, 
             status:true, xfbml:true 
          });
-         FB.Event.subscribe( 'auth.login', function (response) {
+         
+         FB.getLoginStatus(function(response) {
+		  if (response.session) {
+			window.location = "/show" 
+		  } else {
+			
+		  }
+		});
+         
+		 FB.Event.subscribe( 'auth.login', function (response) {
 			window.location = "/show" 
 		 });
-         
       </script>
       
 	  <fb:login-button 
