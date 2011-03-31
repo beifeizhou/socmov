@@ -203,6 +203,8 @@ def show_friend_movies(friendIds):
 	fb = get_facebook_client()
 	facebook_uid = fb.uid
 	movies = []
+	friendIds = friendIds[0:10]
+	print "hello world hello world"
 	for i in friendIds:
 		fql = "SELECT movies from user WHERE uid = '%s'" % i
 		curmovielist = fb.fql.query(fql)
