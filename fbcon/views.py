@@ -20,6 +20,7 @@ def show(request):
 											FACEBOOK_API_KEY,
 											FACEBOOK_SECRET_KEY)
 	profile = {}
+	friends = []
 	#print request.COOKIES
 	if cookie:
 		# Store a local instance of the user data so we don't need
@@ -27,8 +28,9 @@ def show(request):
 		#print cookie, " kemcho"
 		graph = facebook.GraphAPI(cookie["access_token"])
 		profile = graph.get_object("me")
-		print profile
+		friends = graph.get_connections("me", "friends")
+		likes = graph.get_object("me/movies")
 		#check on the development console
 	
-	return render_to_response('show.html', {"user": profile} )
+	return render_to_response('show.html', {"user": profile, "friends"  : friends, "likes" : likes} )
 
