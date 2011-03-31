@@ -2,6 +2,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
+import urllib2
+import urllib
+import json
 
 import facebook
 
@@ -21,15 +24,38 @@ def show(request):
 											FACEBOOK_SECRET_KEY)
 	profile = {}
 	friends = []
+	likes = []
 	#print request.COOKIES
 	if cookie:
 		# Store a local instance of the user data so we don't need
 		# a round-trip to Facebook on every request
 		#print cookie, " kemcho"
 		graph = facebook.GraphAPI(cookie["access_token"])
-		profile = graph.get_object("me")
-		friends = graph.get_connections("me", "friends")
-		likes = graph.get_object("me/movies")
+		#make a batch request
+		
+		#profile = graph.get_object("me")
+		#friends = graph.get_connections("me", "friends")
+		#likes = graph.get_object("me/movies")
+		
+		batchstr  = [{"method":"get","relative_url":"me","access_token":cookie["access_token"]},
+					 {"method":"get","relative_url":"me/friends","access_token":cookie["access_token"]},
+					 {"method":"get","relative_url":"me/movies","access_token":cookie["access_token"]}]
+		args = { "batch" : batchstr,
+				 "method" : "POST", 
+				 "access_token" : cookie["access_token"],
+			    }
+		
+		
+		file = urllib2.urlopen("https://graph.facebook.com/", urllib.urlencode(args))
+		resp = json.loads(file.read())
+		
+		profile = resp[0]['body']
+		friends = resp[1]['body']
+		likes = resp[2]['body']
+		#resp = json.JSONDecoder.decode(resp)
+		#print resp
+		#xyz = graph.request("", args=args, post_args={"method": "POST"})
+		#print xyz
 		#check on the development console
 	
 	return render_to_response('show.html', {"user": profile, "friends"  : friends, "likes" : likes} )
