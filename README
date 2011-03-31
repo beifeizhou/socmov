@@ -11,8 +11,12 @@ Requirements:
  - TMDB Wrapper (https://github.com/doganaydin/themoviedb)
  - Python-SDK (https://github.com/facebook/python-sdk)
 
+Installation:
+ - Run installer.sh in root folder.
+ - If you wish you may delete the install folder after the installation
+
 Running it
  - Run the following:
    python manage.py runserver
    Server runs on port 8000 (http://localhost:8000)
- -
+ - 
