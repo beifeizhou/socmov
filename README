@@ -9,11 +9,10 @@ Requirements:
  - Django (http://www.djangoproject.com/download/)
  - PyMVPA ( Use the one at https://github.com/PyMVPA/PyMVPA )
  - TMDB Wrapper (https://github.com/doganaydin/themoviedb)
- - PyFacebook (https://github.com/sciyoshi/pyfacebook)
- - django-facebookconnect (https://github.com/ryanmark/django-facebookconnect.git)
+ - Python-SDK (https://github.com/facebook/python-sdk)
 
 Running it
  - Run the following:
    python manage.py runserver
    Server runs on port 8000 (http://localhost:8000)
- - 
+ -
