@@ -7,7 +7,6 @@ Facebook and uses data about movies from TMDB API.
 Requirements:
  - Python
  - Django (http://www.djangoproject.com/download/)
- - Numpy (
  - PyMVPA ( Use the one at https://github.com/PyMVPA/PyMVPA )
  - TMDB Wrapper (https://github.com/doganaydin/themoviedb)
  - Python-SDK (https://github.com/facebook/python-sdk)
@@ -15,6 +14,7 @@ Requirements:
 Installation:
  - Run installer.sh in root folder.
  - If you wish you may delete the install folder after the installation
+ 
 
 Running it
  - Run the following:
