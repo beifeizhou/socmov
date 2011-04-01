@@ -41,7 +41,7 @@ def show(request):
 		args = { "batch" : batchstr,
 				 "method" : "POST", 
 				 "access_token" : cookie["access_token"],
-			    }
+			   }
 		
 		
 		file = urllib2.urlopen("https://graph.facebook.com/", urllib.urlencode(args))
@@ -50,6 +50,8 @@ def show(request):
 		profile = _parse_json(resp[0]['body'])
 		friends = _parse_json(resp[1]['body'])['data']
 		likes = _parse_json(resp[2]['body'])['data']
+		
+		
 		
 		print type(profile), type(friends), type(likes)
 		#check on the development console
