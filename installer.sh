@@ -1,6 +1,11 @@
+mkdir install
+cd install
 #Base installation
 sudo apt-get install git-core
 sudo apt-get install python
+sudo apt-get install python-setuptools
+sudo apt-get install swig
+sudo apt-get install python-dev
 
 #The Movie Database Python SDK Installation
 git clone https://github.com/doganaydin/themoviedb.git
@@ -27,9 +32,6 @@ cd ..
 
 #PyMVPA installation
 git clone https://github.com/PyMVPA/PyMVPA.git
-sudo apt-get install python-setuptools
-sudo apt-get install swig
-sudo apt-get install python-dev
 cd PyMVPA
 sudo python setup.py install
 cd ..
