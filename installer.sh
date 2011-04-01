@@ -14,6 +14,17 @@ cd python-sdk
 sudo python setup.py install
 cd ..
 
+#numpy
+git clone git://github.com/numpy/numpy.git
+cd numpy
+sudo python setup.py install
+cd ..
+#scipy
+git clone git://github.com/scipy/scipy.git scipy
+cd scipy
+sudo python setup.py install
+cd ..
+
 #PyMVPA installation
 git clone https://github.com/PyMVPA/PyMVPA.git
 sudo apt-get install python-setuptools

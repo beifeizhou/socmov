@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 import urllib2
 import urllib
 import json
+_parse_json = lambda s: json.loads(s)
 
 import facebook
 
@@ -12,13 +13,10 @@ FACEBOOK_API_KEY='188365901207571'    		# change to your facebook api key
 FACEBOOK_SECRET_KEY='f09191489ff3faff4d3c056838f6339b' 	# change to your facebook app secret key
 
 def index(request):
-	
-	
 	return render_to_response('login.html')
 	
 
 def show(request):
-	
 	cookie = facebook.get_user_from_cookie(	request.COOKIES,
 											FACEBOOK_API_KEY,
 											FACEBOOK_SECRET_KEY)
@@ -47,15 +45,13 @@ def show(request):
 		
 		
 		file = urllib2.urlopen("https://graph.facebook.com/", urllib.urlencode(args))
-		resp = json.loads(file.read())
+		resp = _parse_json(file.read())
 		
-		profile = resp[0]['body']
-		friends = resp[1]['body']
-		likes = resp[2]['body']
-		#resp = json.JSONDecoder.decode(resp)
-		#print resp
-		#xyz = graph.request("", args=args, post_args={"method": "POST"})
-		#print xyz
+		profile = _parse_json(resp[0]['body'])
+		friends = _parse_json(resp[1]['body'])['data']
+		likes = _parse_json(resp[2]['body'])['data']
+		
+		print type(profile), type(friends), type(likes)
 		#check on the development console
 	
 	return render_to_response('show.html', {"user": profile, "friends"  : friends, "likes" : likes} )
