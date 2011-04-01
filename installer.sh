@@ -20,16 +20,9 @@ sudo python setup.py install
 cd ..
 
 #numpy
-git clone git://github.com/numpy/numpy.git
-cd numpy
-sudo python setup.py install
-cd ..
+sudo apt-get install python-numpy
 #scipy
-git clone git://github.com/scipy/scipy.git scipy
-cd scipy
-sudo python setup.py install
-cd ..
-
+sudo apt-get install python-scipy
 #PyMVPA installation
 git clone https://github.com/PyMVPA/PyMVPA.git
 cd PyMVPA
