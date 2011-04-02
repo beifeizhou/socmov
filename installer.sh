@@ -42,3 +42,6 @@ cd ..
 #MySQL Installation
 sudo apt-get install mysql-server
 sudo apt-get install python-mysqldb 
+
+#Create MySQL Database
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS socmovdb;"

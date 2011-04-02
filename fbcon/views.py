@@ -30,6 +30,8 @@ def show(request):
 		# Store a local instance of the user data so we don't need
 		# a round-trip to Facebook on every request
 		x = User.get_current(cookie["access_token"])
+		friends = json.loads(x.friends)
+		likes = json.loads(x.movies)
 		#graph = facebook.GraphAPI(cookie["access_token"])
 		#make a batch request
 		#profile = graph.get_object("me")
@@ -56,4 +58,4 @@ def show(request):
 		"""
 	else :
 		friends = "Please log in :)"
-	return render_to_response('show.html', {"user": profile, "friends"  : friends, "likes" : likes} )
+	return render_to_response('show.html', {"user" : profile, "friends" : friends, "likes" : likes})
