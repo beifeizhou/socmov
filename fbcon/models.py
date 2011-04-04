@@ -156,15 +156,15 @@ class Movie(models.Model):
 							genres = m['genres']
 						)
 			
-			#many to many field relationship between Movie and Genre
-			"""obj = m['genres']
-			for i in range(0, len(obj)):
-				#g = Genre.objects.filter(gid = obj[i]['id'])[0]
-				G = Genre.objects.get(gid = obj[i]['id'])
-				print G.name, G.gid
-				movie.genre.add( G )"""
-			
 			movie.save()
+			#many to many field relationship between Movie and Genre
+			obj = m['genres']
+			for i in range(0, len(obj)):
+				G = Genre.objects.get(gid = obj[i]['id'])
+				#print G.name, G.gid
+				movie.genre.add(G)
+			
+			#movie.save()
 			return m
 		
 		else:
