@@ -1,100 +1,249 @@
 
 from django.db import models
-from themoviedb import tmdb
 from datetime import *	
-
 import urllib
 import urllib2
 import json
+import time
+
 _parse_json = lambda s: json.loads(s)
+config = {}
+config['apikey'] = "19e1fde682cf97ab5321ae7ec25c6765" #"a8b9f96dde091408a03cb4c78477bd14" #"YOUR_API_KEY" # Thanks BeeKeeper
+config['urls'] = {}
+config['urls']['movie.search'] = "http://api.themoviedb.org/2.1/Movie.search/en/json/%(apikey)s/%%s" % (config)
+config['urls']['movie.getInfo'] = "http://api.themoviedb.org/2.1/Movie.getInfo/en/json/%(apikey)s/%%s" % (config)
+config['urls']['media.getInfo'] = "http://api.themoviedb.org/2.1/Media.getInfo/en/json/%(apikey)s/%%s/%%s" % (config)
+config['urls']['imdb.lookUp'] = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/json/%(apikey)s/%%s" % (config)
+config['urls']['movie.browse'] = "http://api.themoviedb.org/2.1/Movie.browse/en/json/%(apikey)s?order_by=%%s&order=%%s&page=1&per_page=%%s&min_votes=10" % (config)
+config['urls']['genre.getList'] = "http://api.themoviedb.org/2.1/Genres.getList/en/json/%(apikey)s" % (config)
+offest = 2629743 * 3 #1 month = 2629743 seconds
+genre_dict = {}
 
 class Genre(models.Model):
-	gid = models.IntegerField()
+	"""Database to store all the genres supported by TMDB"""
+	gid = models.IntegerField(primary_key = True)
 	name = models.CharField(max_length = 20)
 	url = models.CharField(max_length = 100)
-	last_modified_by_us = models.DateField()
+	last_modified_by_us = models.DateField(null = True)
 	
-	genre = {}
-	def getGenreList():
-		url = tmdb.config['urls']['genre.getList']
-		etree = tmdb.XmlHandler(url).getEt()
-		for cur_result in etree.find("genres").findall("genre"):
-			name = cur_result.get("name")
-			for item in cur_result.getchildren():
-				if item.tag == 'id':
-					genre[name] = item.text
+	""" getGenreList is used to fetch all the genres from the TMDB API"""
+	def getGenreList(self):
+		url = config['urls']['genre.getList']
+		#print url
+		resp = _parse_json( urllib2.urlopen(url).read() )
+		for i in range(1, len(resp)):
+			genre_dict[resp[i]['name']] = str(resp[i]['id'])
+			gg = Genre(gid = resp[i]['id'], name = resp[i]['name'], url = resp[i]['url'], last_modified_by_us = datetime.now())
+			gg.save()	
+			
+class SearchResults(list):
+    """Stores a list of Movie's that matched the search"""
+    def __repr__(self):
+        return "<Search results: %s>" % (list.__repr__(self))			
+							
+class MovieResult(dict):
+    """A dict containing the information about the film"""
+    def __repr__(self):
+        return "<MovieResult: %s (%s)>" % (self.get("name"), self.get("released"))
 
 class Movie(models.Model):
-	mid = models.IntegerField()
-	imdb_id = models.IntegerField()
-	popularity = models.IntegerField()
-	votes = models.IntegerField()
-	runtime = models.IntegerField()
-	version = models.IntegerField()
-	revenue = models.BigIntegerField()
-	budget = models.BigIntegerField()
-	rating = models.DecimalField(max_digits = 2, decimal_places = 1)
+	mid = models.IntegerField(primary_key = True)
+	popularity = models.IntegerField(null = True)
+	votes = models.IntegerField(null = True)
+	runtime = models.IntegerField(null = True)
+	version = models.IntegerField(null = True)
+	revenue = models.BigIntegerField(null = True)
+	budget = models.BigIntegerField(null = True)
+	rating = models.DecimalField(max_digits = 2, decimal_places = 1, null = True)
 	translated = models.BooleanField()
 	adult = models.BooleanField()
-	language = models.CharField(max_length = 10)
-	original_name = models.CharField(max_length = 100)
+	imdb_id = models.CharField(max_length = 15, null = True)
+	status = models.CharField(max_length = 15, null = True)
+	language = models.CharField(max_length = 10, null = True)
+	original_name = models.CharField(max_length = 100, null = True)
 	name = models.CharField(max_length = 100)
-	alternative_name = models.CharField(max_length = 100)
-	type = models.CharField(max_length = 20)
-	url = models.CharField(max_length = 100)
-	certification = models.CharField(max_length = 10)
-	homepage = models.CharField(max_length = 100)
-	trailer = models.CharField(max_length = 100)
-	overview = models.TextField()
-	tagline = models.TextField()
-	last_modified_by_tmdb = models.DateField()
-	released = models.DateField()
-	last_modified_by_us = models.DateField()
-	
-	#foreign key(s)
+	alternative_name = models.CharField(max_length = 100, null = True)
+	movie_type = models.CharField(max_length = 20, null = True)
+	url = models.CharField(max_length = 100, null = True)
+	certification = models.CharField(max_length = 10, null = True)
+	homepage = models.CharField(max_length = 100, null = True)
+	trailer = models.CharField(max_length = 100, null = True)
+	overview = models.TextField(null = True)
+	tagline = models.TextField(null = True)
+	last_modified_by_tmdb = models.DateField(null = True)
+	released = models.DateTimeField(null = True)
+	last_modified_by_us = models.DateTimeField()
 	genre = models.ManyToManyField("Genre")
 	
 	#json encoded fields
-	languages_spoken = models.TextField()
-	categories = models.TextField()
-	keywords = models.TextField()
-	studios = models.TextField()
-	countries = models.TextField()
-
-	#TODO: puravshah, caching
-	def getMovieById(self, mid):
-		return tmdb.getMovieInfo(mid)	
+	posters = models.TextField(null = True)
+	backdrops = models.TextField(null = True)
+	languages_spoken = models.TextField(null = True)
+	keywords = models.TextField(null = True)
+	studios = models.TextField(null = True)
+	cast = models.TextField(null = True)
+	countries = models.TextField(null = True)
+	genres = models.TextField(null = True)
+		
+	def parse(self, current):
+		ret = MovieResult()
+		keys = current.keys()
+		for i in range(0, len(keys)):
+			ret[keys[i]] = current[keys[i]]
+		return ret		
+	#parse = staticmethod(parse)
 	
-	def browse(self, order_by, order, topX, gen):
-		url = "http://api.themoviedb.org/2.1/Movie.browse/en-US/xml/" + tmdb.config['apikey']
-		url += "?order_by=" + str(order_by) + "&order=" + str(order) + "&page=1&per_page=" + str(topX)
-		optional = "&release_max=" + str(int(time.time() + 2629743 * 6)) + "&release_min=0"
-		url += optional
+	""" getMovieInfo is used to fetch all info about a movie. It takes the id (MID) of the Movie, 
+		which can be obtained using the search method below. MID is an integer"""
+	def getMovieInfo(self, MID):
+		res = Movie.objects.filter(mid=MID)
+		cached = True
+		if len(res) == 0:
+			cached = False
+		elif res[0].last_modified_by_us < datetime.now() - timedelta(days = 30):
+			cached = False
+		#print "Cached = " + str(cached)
 		
-		length = len(gen)
-		if length > 0:
-			url += "&genres=" + Genre.genre[gen[0]]
-		for i in range(1, length):
-			url += "," + Genre.genre[gen[i]]
-		#print "URL : " + url
+		if cached == False:
+			#print "Fetching from TMDB..."
+			url = config['urls']['movie.getInfo'] % (MID)
+			resp = _parse_json( urllib2.urlopen(url).read() )[0]
+			m = self.parse(resp)
+			
+			s = m['released']
+			yy1 = int(s[0:4])
+			mm1 = int(s[5:7])
+			dd1 = int(s[8:])
+			s = m['last_modified_at']
+			yy2 = int(s[0:4])
+			mm2 = int(s[5:7])
+			dd2 = int(s[8:10])
+			
+			#print "Fetched"
+			#print m.keys()
+			movie = Movie(	mid = m['id'], 
+							imdb_id = m['imdb_id'], 
+							popularity = m['popularity'], 
+							votes = m['votes'], 
+							runtime = m['runtime'], 
+							version = m['version'], 
+							revenue = m['revenue'],
+							budget = m['budget'],
+							rating = str(m['rating']),
+							translated = m['translated'],
+							adult = m['adult'],
+							language = m['language'],
+							name = m['name'],
+							original_name = m['original_name'],
+							alternative_name = m['alternative_name'],
+							movie_type = m['movie_type'],
+							status = m['status'],
+							url = m['url'],
+							certification = m['certification'],
+							homepage = m['homepage'],
+							trailer = m['trailer'],
+							overview = m['overview'],
+							tagline = m['tagline'],
+							last_modified_by_tmdb = date(yy2, mm2, dd2),
+							released = date(yy1, mm1, dd1),
+							last_modified_by_us = datetime.now(),
+							posters = m['posters'],
+							backdrops = m['backdrops'],
+							countries = m['countries'],
+							studios = m['studios'],
+							cast = m['cast'],
+							keywords = m['keywords'],
+							genres = m['genres']
+						)
+			
+			#many to many field relationship between Movie and Genre
+			"""obj = m['genres']
+			for i in range(0, len(obj)):
+				#g = Genre.objects.filter(gid = obj[i]['id'])[0]
+				G = Genre.objects.get(gid = obj[i]['id'])
+				print G.name, G.gid
+				movie.genre.add( G )"""
+			
+			movie.save()
+			return m
 		
-		etree = tmdb.XmlHandler(url).getEt()
-		search_results = tmdb.SearchResults()
-		for cur_result in etree.find("movies").findall("movie"):
-			cur_movie = tmdb.parseSearchResults(cur_result)
-			search_results.append(cur_movie)	
+		else:
+			#print "Movie is cached, fetch from db instead"
+			r = res[0]
+			movie = MovieResult()
+			movie['id'] = r.mid
+			movie['imdb_id'] = r.imdb_id
+			movie['popularity'] = r.popularity
+			movie['votes'] = r.votes
+			movie['runtime'] = r.runtime
+			movie['version'] = r.votes
+			movie['revenue'] = r.revenue
+			movie['budget'] = r.budget
+			movie['rating'] = r.rating
+			movie['translated'] = r.translated
+			movie['adult'] = r.adult
+			movie['language'] = r.language
+			movie['original_name'] = r.original_name
+			movie['name'] = r.name
+			movie['alternative_name'] = r.alternative_name
+			movie['movie_type'] = r.movie_type
+			movie['url'] = r.url
+			movie['certification'] = r.certification
+			movie['homepage'] = r.homepage
+			movie['trailer'] = r.trailer
+			movie['overview'] = r.overview
+			movie['tagline'] = r.tagline
+			movie['last_modified_at'] = r.last_modified_by_tmdb
+			movie['released'] = r.released
+			movie['posters'] = r.posters
+			movie['countries'] = r.countries
+			movie['studios'] = r.studios
+			movie['keywords'] = r.keywords
+			movie['genres'] = r.genres
+			movie['backdrops'] = r.backdrops
+			movie['cast'] = r.cast
+			movie['status'] = r.status
+			
+			return movie
+	#getMovieInfo = staticmethod(getMovieInfo)
+		
+	""" search is used to find a list of movies that match your given 'tag'. It is particularly useful to 
+		get the id of a particular movie. tag is a string"""
+	def search(self, tag):
+		search_results = SearchResults()
+		url = config['urls']['movie.search'] % (tag)
+		resp = _parse_json( urllib2.urlopen(url).read() )
+		for i in range(0, len(resp)):
+			cur_result = self.parse(resp[i])
+			search_results.append(cur_result)
 		return search_results
-		
-	def getLatestMovie(self):
-		url = tmdb.config['urls']['movie.getLatest']
-		#print "URL Latest : " + url
-		etree = tmdb.XmlHandler(url).getEt()
-		
-		movie = tmdb.Movie()
-		for item in etree.find("movie").getchildren():
-			movie[item.tag] = item.text
-		return movie
+	#search = staticmethod(search)
 	
+	""" browse method is used to fetch top_x number of movies, based on the following parameters:
+		order_by: 	["rating", "release", "title"]
+		order: 		["asc", "desc"]
+		top_x:		an integer (number of movies to be fetched)
+		genre:		an array containing all the genres to which the movies should belong to """
+	def browse(self, order_by, order, top_x, genre):
+		search_results = SearchResults()
+		url = config['urls']['movie.browse'] % (order_by, order, top_x)
+		
+		if len(genre) > 0:
+			G = Genre.objects.get(name = genre[0])
+			url += "&genres=" + str(G.gid) #genre_dict[genre[0]]
+			for i in range(1, len(genre)):
+				G = Genre.objects.get(name = genre[i])
+				url += "and" + str(G.gid) #genre_dict[genre[i]]
+			url += "&genres_selector=and"
+		#print url
+		resp = _parse_json( urllib2.urlopen(url).read() )
+		for i in range(0, len(resp)):
+			cur_result = self.parse(resp[i])
+			search_results.append(cur_result)
+		return search_results
+	#browse = staticmethod(browse)
+		
+		
 class User(models.Model):
 	username = models.CharField(max_length=128, null=True)
 	first_name = models.CharField(max_length=128, null=True)
@@ -181,3 +330,4 @@ class User(models.Model):
 		r.save()
 		return r
 	get_by_id = staticmethod(get_by_id)
+
