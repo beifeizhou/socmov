@@ -1,4 +1,3 @@
-
 from django.db import models
 from datetime import *	
 import urllib
@@ -26,15 +25,16 @@ class Genre(models.Model):
 	url = models.CharField(max_length = 100)
 	last_modified_by_us = models.DateField(null = True)
 	
-	""" getGenreList is used to fetch all the genres from the TMDB API"""
-	def getGenreList(self):
+	""" getGenreList is used to fetch all the genres from the TMDB API. This function is to be called only once """
+	def getGenreList():
 		url = config['urls']['genre.getList']
 		#print url
 		resp = _parse_json( urllib2.urlopen(url).read() )
 		for i in range(1, len(resp)):
 			genre_dict[resp[i]['name']] = str(resp[i]['id'])
 			gg = Genre(gid = resp[i]['id'], name = resp[i]['name'], url = resp[i]['url'], last_modified_by_us = datetime.now())
-			gg.save()	
+			gg.save()
+	getGenreList = staticmethod(getGenreList)	
 			
 class SearchResults(list):
     """Stores a list of Movie's that matched the search"""
@@ -85,17 +85,17 @@ class Movie(models.Model):
 	countries = models.TextField(null = True)
 	genres = models.TextField(null = True)
 		
-	def parse(self, current):
+	def parse(current):
 		ret = MovieResult()
 		keys = current.keys()
 		for i in range(0, len(keys)):
 			ret[keys[i]] = current[keys[i]]
 		return ret		
-	#parse = staticmethod(parse)
+	parse = staticmethod(parse)
 	
 	""" getMovieInfo is used to fetch all info about a movie. It takes the id (MID) of the Movie, 
 		which can be obtained using the search method below. MID is an integer"""
-	def getMovieInfo(self, MID):
+	def getMovieInfo(MID):
 		res = Movie.objects.filter(mid=MID)
 		cached = True
 		if len(res) == 0:
@@ -108,7 +108,7 @@ class Movie(models.Model):
 			#print "Fetching from TMDB..."
 			url = config['urls']['movie.getInfo'] % (MID)
 			resp = _parse_json( urllib2.urlopen(url).read() )[0]
-			m = self.parse(resp)
+			m = Movie.parse(resp)
 			
 			s = m['released']
 			yy1 = int(s[0:4])
@@ -165,11 +165,13 @@ class Movie(models.Model):
 				movie.genre.add(G)
 			
 			#movie.save()
-			return m
+			return movie
 		
 		else:
 			#print "Movie is cached, fetch from db instead"
 			r = res[0]
+			return r
+			"""
 			movie = MovieResult()
 			movie['id'] = r.mid
 			movie['imdb_id'] = r.imdb_id
@@ -203,28 +205,28 @@ class Movie(models.Model):
 			movie['backdrops'] = r.backdrops
 			movie['cast'] = r.cast
 			movie['status'] = r.status
-			
 			return movie
-	#getMovieInfo = staticmethod(getMovieInfo)
+			"""
+	getMovieInfo = staticmethod(getMovieInfo)
 		
 	""" search is used to find a list of movies that match your given 'tag'. It is particularly useful to 
 		get the id of a particular movie. tag is a string"""
-	def search(self, tag):
+	def search(tag):
 		search_results = SearchResults()
 		url = config['urls']['movie.search'] % (tag)
 		resp = _parse_json( urllib2.urlopen(url).read() )
 		for i in range(0, len(resp)):
-			cur_result = self.parse(resp[i])
+			cur_result = Movie.parse(resp[i])
 			search_results.append(cur_result)
 		return search_results
-	#search = staticmethod(search)
+	search = staticmethod(search)
 	
 	""" browse method is used to fetch top_x number of movies, based on the following parameters:
 		order_by: 	["rating", "release", "title"]
 		order: 		["asc", "desc"]
 		top_x:		an integer (number of movies to be fetched)
 		genre:		an array containing all the genres to which the movies should belong to """
-	def browse(self, order_by, order, top_x, genre):
+	def browse(order_by, order, top_x, genre):
 		search_results = SearchResults()
 		url = config['urls']['movie.browse'] % (order_by, order, top_x)
 		
@@ -233,7 +235,7 @@ class Movie(models.Model):
 			url += "&genres=" + str(G.gid) #genre_dict[genre[0]]
 			for i in range(1, len(genre)):
 				G = Genre.objects.get(name = genre[i])
-				url += "and" + str(G.gid) #genre_dict[genre[i]]
+				url += "," + str(G.gid) #genre_dict[genre[i]]
 			url += "&genres_selector=and"
 		#print url
 		resp = _parse_json( urllib2.urlopen(url).read() )
@@ -241,7 +243,7 @@ class Movie(models.Model):
 			cur_result = self.parse(resp[i])
 			search_results.append(cur_result)
 		return search_results
-	#browse = staticmethod(browse)
+	browse = staticmethod(browse)
 		
 		
 class User(models.Model):
