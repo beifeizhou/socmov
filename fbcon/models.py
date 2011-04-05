@@ -96,129 +96,134 @@ class Movie(models.Model):
 	""" getMovieInfo is used to fetch all info about a movie. It takes the id (MID) of the Movie, 
 		which can be obtained using the search method below. MID is an integer"""
 	def getMovieInfo(MID):
-		res = Movie.objects.filter(mid=MID)
-		cached = True
-		if len(res) == 0:
-			cached = False
-		elif res[0].last_modified_by_us < datetime.now() - timedelta(days = 30):
-			cached = False
-		#print "Cached = " + str(cached)
-		
-		if cached == False:
-			#print "Fetching from TMDB..."
-			url = config['urls']['movie.getInfo'] % (MID)
-			resp = _parse_json( urllib2.urlopen(url).read() )[0]
-			m = Movie.parse(resp)
+		try:
+			res = Movie.objects.filter(mid=MID)
+			cached = True
+			if len(res) == 0:
+				cached = False
+			elif res[0].last_modified_by_us < datetime.now() - timedelta(days = 30):
+				cached = False
+			#print "Cached = " + str(cached)
 			
-			s = m['released']
-			yy1 = int(s[0:4])
-			mm1 = int(s[5:7])
-			dd1 = int(s[8:])
-			s = m['last_modified_at']
-			yy2 = int(s[0:4])
-			mm2 = int(s[5:7])
-			dd2 = int(s[8:10])
+			if cached == False:
+				#print "Fetching from TMDB..."
+				url = config['urls']['movie.getInfo'] % (MID)
+				resp = _parse_json( urllib2.urlopen(url).read() )[0]
+				m = Movie.parse(resp)
+				
+				s = m['released']
+				yy1 = int(s[0:4])
+				mm1 = int(s[5:7])
+				dd1 = int(s[8:])
+				s = m['last_modified_at']
+				yy2 = int(s[0:4])
+				mm2 = int(s[5:7])
+				dd2 = int(s[8:10])
+				
+				#print "Fetched"
+				#print m.keys()
+				movie = Movie(	mid = m['id'], 
+								imdb_id = m['imdb_id'], 
+								popularity = m['popularity'], 
+								votes = m['votes'], 
+								runtime = m['runtime'], 
+								version = m['version'], 
+								revenue = m['revenue'],
+								budget = m['budget'],
+								rating = str(m['rating']),
+								translated = m['translated'],
+								adult = m['adult'],
+								language = m['language'],
+								name = m['name'],
+								original_name = m['original_name'],
+								alternative_name = m['alternative_name'],
+								movie_type = m['movie_type'],
+								status = m['status'],
+								url = m['url'],
+								certification = m['certification'],
+								homepage = m['homepage'],
+								trailer = m['trailer'],
+								overview = m['overview'],
+								tagline = m['tagline'],
+								last_modified_by_tmdb = date(yy2, mm2, dd2),
+								released = date(yy1, mm1, dd1),
+								last_modified_by_us = datetime.now(),
+								posters = m['posters'],
+								backdrops = m['backdrops'],
+								countries = m['countries'],
+								studios = m['studios'],
+								cast = m['cast'],
+								keywords = m['keywords'],
+								genres = m['genres']
+							)
+				
+				movie.save()
+				#many to many field relationship between Movie and Genre
+				obj = m['genres']
+				for i in range(0, len(obj)):
+					G = Genre.objects.get(gid = obj[i]['id'])
+					#print G.name, G.gid
+					movie.genre.add(G)
+				
+				return movie
 			
-			#print "Fetched"
-			#print m.keys()
-			movie = Movie(	mid = m['id'], 
-							imdb_id = m['imdb_id'], 
-							popularity = m['popularity'], 
-							votes = m['votes'], 
-							runtime = m['runtime'], 
-							version = m['version'], 
-							revenue = m['revenue'],
-							budget = m['budget'],
-							rating = str(m['rating']),
-							translated = m['translated'],
-							adult = m['adult'],
-							language = m['language'],
-							name = m['name'],
-							original_name = m['original_name'],
-							alternative_name = m['alternative_name'],
-							movie_type = m['movie_type'],
-							status = m['status'],
-							url = m['url'],
-							certification = m['certification'],
-							homepage = m['homepage'],
-							trailer = m['trailer'],
-							overview = m['overview'],
-							tagline = m['tagline'],
-							last_modified_by_tmdb = date(yy2, mm2, dd2),
-							released = date(yy1, mm1, dd1),
-							last_modified_by_us = datetime.now(),
-							posters = m['posters'],
-							backdrops = m['backdrops'],
-							countries = m['countries'],
-							studios = m['studios'],
-							cast = m['cast'],
-							keywords = m['keywords'],
-							genres = m['genres']
-						)
-			
-			movie.save()
-			#many to many field relationship between Movie and Genre
-			obj = m['genres']
-			for i in range(0, len(obj)):
-				G = Genre.objects.get(gid = obj[i]['id'])
-				#print G.name, G.gid
-				movie.genre.add(G)
-			
-			#movie.save()
-			return movie
-		
-		else:
-			#print "Movie is cached, fetch from db instead"
-			r = res[0]
-			return r
-			"""
-			movie = MovieResult()
-			movie['id'] = r.mid
-			movie['imdb_id'] = r.imdb_id
-			movie['popularity'] = r.popularity
-			movie['votes'] = r.votes
-			movie['runtime'] = r.runtime
-			movie['version'] = r.votes
-			movie['revenue'] = r.revenue
-			movie['budget'] = r.budget
-			movie['rating'] = r.rating
-			movie['translated'] = r.translated
-			movie['adult'] = r.adult
-			movie['language'] = r.language
-			movie['original_name'] = r.original_name
-			movie['name'] = r.name
-			movie['alternative_name'] = r.alternative_name
-			movie['movie_type'] = r.movie_type
-			movie['url'] = r.url
-			movie['certification'] = r.certification
-			movie['homepage'] = r.homepage
-			movie['trailer'] = r.trailer
-			movie['overview'] = r.overview
-			movie['tagline'] = r.tagline
-			movie['last_modified_at'] = r.last_modified_by_tmdb
-			movie['released'] = r.released
-			movie['posters'] = r.posters
-			movie['countries'] = r.countries
-			movie['studios'] = r.studios
-			movie['keywords'] = r.keywords
-			movie['genres'] = r.genres
-			movie['backdrops'] = r.backdrops
-			movie['cast'] = r.cast
-			movie['status'] = r.status
-			return movie
-			"""
+			else:
+				#print "Movie is cached, fetch from db instead"
+				r = res[0]
+				return r
+				"""
+				movie = MovieResult()
+				movie['id'] = r.mid
+				movie['imdb_id'] = r.imdb_id
+				movie['popularity'] = r.popularity
+				movie['votes'] = r.votes
+				movie['runtime'] = r.runtime
+				movie['version'] = r.votes
+				movie['revenue'] = r.revenue
+				movie['budget'] = r.budget
+				movie['rating'] = r.rating
+				movie['translated'] = r.translated
+				movie['adult'] = r.adult
+				movie['language'] = r.language
+				movie['original_name'] = r.original_name
+				movie['name'] = r.name
+				movie['alternative_name'] = r.alternative_name
+				movie['movie_type'] = r.movie_type
+				movie['url'] = r.url
+				movie['certification'] = r.certification
+				movie['homepage'] = r.homepage
+				movie['trailer'] = r.trailer
+				movie['overview'] = r.overview
+				movie['tagline'] = r.tagline
+				movie['last_modified_at'] = r.last_modified_by_tmdb
+				movie['released'] = r.released
+				movie['posters'] = r.posters
+				movie['countries'] = r.countries
+				movie['studios'] = r.studios
+				movie['keywords'] = r.keywords
+				movie['genres'] = r.genres
+				movie['backdrops'] = r.backdrops
+				movie['cast'] = r.cast
+				movie['status'] = r.status
+				return movie
+				"""
+		except Exception:
+			return None
 	getMovieInfo = staticmethod(getMovieInfo)
 		
 	""" search is used to find a list of movies that match your given 'tag'. It is particularly useful to 
 		get the id of a particular movie. tag is a string"""
 	def search(tag):
 		search_results = SearchResults()
-		url = config['urls']['movie.search'] % (tag)
-		resp = _parse_json( urllib2.urlopen(url).read() )
-		for i in range(0, len(resp)):
-			cur_result = Movie.parse(resp[i])
-			search_results.append(cur_result)
-		return search_results
+		try:
+			url = config['urls']['movie.search'] % (tag)
+			resp = _parse_json( urllib2.urlopen(url).read() )
+			for i in range(0, len(resp)):
+				cur_result = Movie.parse(resp[i])
+				search_results.append(cur_result)
+			return search_results
+		except Exception:
+			return SearchResults()
 	search = staticmethod(search)
 	
 	""" browse method is used to fetch top_x number of movies, based on the following parameters:
@@ -228,21 +233,24 @@ class Movie(models.Model):
 		genre:		an array containing all the genres to which the movies should belong to """
 	def browse(order_by, order, top_x, genre):
 		search_results = SearchResults()
-		url = config['urls']['movie.browse'] % (order_by, order, top_x)
-		
-		if len(genre) > 0:
-			G = Genre.objects.get(name = genre[0])
-			url += "&genres=" + str(G.gid) #genre_dict[genre[0]]
-			for i in range(1, len(genre)):
-				G = Genre.objects.get(name = genre[i])
-				url += "," + str(G.gid) #genre_dict[genre[i]]
-			url += "&genres_selector=and"
-		#print url
-		resp = _parse_json( urllib2.urlopen(url).read() )
-		for i in range(0, len(resp)):
-			cur_result = self.parse(resp[i])
-			search_results.append(cur_result)
-		return search_results
+		try:
+			url = config['urls']['movie.browse'] % (order_by, order, top_x)
+			
+			if len(genre) > 0:
+				G = Genre.objects.get(name = genre[0])
+				url += "&genres=" + str(G.gid) #genre_dict[genre[0]]
+				for i in range(1, len(genre)):
+					G = Genre.objects.get(name = genre[i])
+					url += "," + str(G.gid) #genre_dict[genre[i]]
+				url += "&genres_selector=and"
+			#print url
+			resp = _parse_json( urllib2.urlopen(url).read() )
+			for i in range(0, len(resp)):
+				cur_result = self.parse(resp[i])
+				search_results.append(cur_result)
+			return search_results
+		except Exception:
+			return SearchResults()
 	browse = staticmethod(browse)
 		
 		
