@@ -28,7 +28,6 @@ class Genre(models.Model):
 	""" getGenreList is used to fetch all the genres from the TMDB API. This function is to be called only once """
 	def getGenreList():
 		url = config['urls']['genre.getList']
-		#print url
 		resp = _parse_json( urllib2.urlopen(url).read() )
 		for i in range(1, len(resp)):
 			genre_dict[resp[i]['name']] = str(resp[i]['id'])
@@ -103,10 +102,8 @@ class Movie(models.Model):
 				cached = False
 			elif res[0].last_modified_by_us < datetime.now() - timedelta(days = 30):
 				cached = False
-			#print "Cached = " + str(cached)
 			
 			if cached == False:
-				#print "Fetching from TMDB..."
 				url = config['urls']['movie.getInfo'] % (MID)
 				resp = _parse_json( urllib2.urlopen(url).read() )[0]
 				m = Movie.parse(resp)
@@ -120,8 +117,6 @@ class Movie(models.Model):
 				mm2 = int(s[5:7])
 				dd2 = int(s[8:10])
 				
-				#print "Fetched"
-				#print m.keys()
 				movie = Movie(	mid = m['id'], 
 								imdb_id = m['imdb_id'], 
 								popularity = m['popularity'], 
@@ -148,13 +143,13 @@ class Movie(models.Model):
 								last_modified_by_tmdb = date(yy2, mm2, dd2),
 								released = date(yy1, mm1, dd1),
 								last_modified_by_us = datetime.now(),
-								posters = m['posters'],
-								backdrops = m['backdrops'],
-								countries = m['countries'],
-								studios = m['studios'],
-								cast = m['cast'],
-								keywords = m['keywords'],
-								genres = m['genres']
+								posters = json.dumps(m['posters']),
+								backdrops = json.dumps(m['backdrops']),
+								countries = json.dumps(m['countries']),
+								studios = json.dumps(m['studios']),
+								cast = json.dumps(m['cast']),
+								keywords = json.dumps(m['keywords']),
+								genres = json.dumps(m['genres'])
 							)
 				
 				movie.save()
@@ -162,51 +157,12 @@ class Movie(models.Model):
 				obj = m['genres']
 				for i in range(0, len(obj)):
 					G = Genre.objects.get(gid = obj[i]['id'])
-					#print G.name, G.gid
 					movie.genre.add(G)
 				
 				return movie
 			
 			else:
-				#print "Movie is cached, fetch from db instead"
-				r = res[0]
-				return r
-				"""
-				movie = MovieResult()
-				movie['id'] = r.mid
-				movie['imdb_id'] = r.imdb_id
-				movie['popularity'] = r.popularity
-				movie['votes'] = r.votes
-				movie['runtime'] = r.runtime
-				movie['version'] = r.votes
-				movie['revenue'] = r.revenue
-				movie['budget'] = r.budget
-				movie['rating'] = r.rating
-				movie['translated'] = r.translated
-				movie['adult'] = r.adult
-				movie['language'] = r.language
-				movie['original_name'] = r.original_name
-				movie['name'] = r.name
-				movie['alternative_name'] = r.alternative_name
-				movie['movie_type'] = r.movie_type
-				movie['url'] = r.url
-				movie['certification'] = r.certification
-				movie['homepage'] = r.homepage
-				movie['trailer'] = r.trailer
-				movie['overview'] = r.overview
-				movie['tagline'] = r.tagline
-				movie['last_modified_at'] = r.last_modified_by_tmdb
-				movie['released'] = r.released
-				movie['posters'] = r.posters
-				movie['countries'] = r.countries
-				movie['studios'] = r.studios
-				movie['keywords'] = r.keywords
-				movie['genres'] = r.genres
-				movie['backdrops'] = r.backdrops
-				movie['cast'] = r.cast
-				movie['status'] = r.status
-				return movie
-				"""
+				return res[0]
 		except Exception:
 			return None
 	getMovieInfo = staticmethod(getMovieInfo)
@@ -238,15 +194,15 @@ class Movie(models.Model):
 			
 			if len(genre) > 0:
 				G = Genre.objects.get(name = genre[0])
-				url += "&genres=" + str(G.gid) #genre_dict[genre[0]]
+				url += "&genres=" + str(G.gid)
 				for i in range(1, len(genre)):
 					G = Genre.objects.get(name = genre[i])
-					url += "," + str(G.gid) #genre_dict[genre[i]]
+					url += "," + str(G.gid)
 				url += "&genres_selector=and"
-			#print url
+			
 			resp = _parse_json( urllib2.urlopen(url).read() )
 			for i in range(0, len(resp)):
-				cur_result = self.parse(resp[i])
+				cur_result = Movie.parse(resp[i])
 				search_results.append(cur_result)
 			return search_results
 		except Exception:
