@@ -1,10 +1,7 @@
- <html>
-    <head>
-      <title>My Facebook Login Page</title>
-    </head>
-    <body>
+ {% extends "base.html" %}
+ {% block title %} Login {% endblock %}
+ {% block body %} 
       <div id="fb-root"></div>
-      <script src="http://connect.facebook.net/en_US/all.js"></script>
       <script>
          FB.init({ 
             appId:'188365901207571', cookie:true, 
@@ -13,7 +10,6 @@
          FB.getLoginStatus(function(response) {
 		  if (response.session) {
 			window.location = "/show"
-			//set cookie... ideally 
 		  } else {
 			
 		  }
@@ -27,6 +23,4 @@
 	  <fb:login-button 
 	  onlogin="loginEvent()"
 	  perms="user_activities,user_hometown,user_interests,user_likes,user_location,user_relationships,user_religion_politics,user_work_history,offline_access">Login with Facebook</fb:login-button>
-      
-    </body>
-</html>
+{% endblock %}

@@ -5,6 +5,9 @@ import urllib2
 import json
 import time
 
+from urlparse import urlparse
+from cgi import parse_qs
+
 _parse_json = lambda s: json.loads(s)
 config = {}
 config['apikey'] = "19e1fde682cf97ab5321ae7ec25c6765" #"a8b9f96dde091408a03cb4c78477bd14" #"YOUR_API_KEY" # Thanks BeeKeeper
@@ -116,6 +119,13 @@ class Movie(models.Model):
 				yy2 = int(s[0:4])
 				mm2 = int(s[5:7])
 				dd2 = int(s[8:10])
+				"""
+				TODO youtube trailer crap, currently a very stupid system """
+				m['trailer'] = parse_qs(urlparse(m['trailer']).query)
+				if m['trailer'].get('v'):
+					m['trailer'] = m['trailer']['v'][0]
+				else:
+					m['trailer'] = None 			
 				
 				movie = Movie(	mid = m['id'], 
 								imdb_id = m['imdb_id'], 
@@ -158,12 +168,11 @@ class Movie(models.Model):
 				for i in range(0, len(obj)):
 					G = Genre.objects.get(gid = obj[i]['id'])
 					movie.genre.add(G)
-				
 				return movie
-			
 			else:
 				return res[0]
-		except Exception:
+		except Exception as detail:
+			print detail
 			return None
 	getMovieInfo = staticmethod(getMovieInfo)
 		
@@ -191,7 +200,7 @@ class Movie(models.Model):
 		search_results = SearchResults()
 		try:
 			url = config['urls']['movie.browse'] % (order_by, order, top_x)
-			
+	
 			if len(genre) > 0:
 				G = Genre.objects.get(name = genre[0])
 				url += "&genres=" + str(G.gid)
@@ -208,6 +217,10 @@ class Movie(models.Model):
 		except Exception:
 			return SearchResults()
 	browse = staticmethod(browse)
+	
+	def get_trailer_embed(self):
+		return "http://www.youtube.com/embed/" + str(self.trailer)
+	
 		
 		
 class User(models.Model):
@@ -281,7 +294,7 @@ class User(models.Model):
 		return u
 	get_current = staticmethod(get_current)
 	
-	def get_by_id(id):
+	def get_by_id(id, access_token):
 		r = User.objects.filter(uid=id)
 		cached = True
 		if len(r) == 0:
@@ -291,8 +304,9 @@ class User(models.Model):
 			if r.last_fetched < datetime.now() - timedelta(days=1):
 				cached = False
 			else:
+				print "returning cached user"
 				return r
-		r = fetch(id)
+		r = fetch(id, access_token)
 		r.save()
 		return r
 	get_by_id = staticmethod(get_by_id)
