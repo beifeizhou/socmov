@@ -1,9 +1,13 @@
-from django.db import models
+from django.db import models, connection
 from datetime import *	
 import urllib
 import urllib2
 import json
 import time
+import logging
+
+#logging.basicConfig(filename=errors.log, level=logging.DEBUG)
+#logging.debug('This message should go to the log file')
 
 _parse_json = lambda s: json.loads(s)
 config = {}
@@ -27,12 +31,15 @@ class Genre(models.Model):
 	
 	""" getGenreList is used to fetch all the genres from the TMDB API. This function is to be called only once """
 	def getGenreList():
-		url = config['urls']['genre.getList']
-		resp = _parse_json( urllib2.urlopen(url).read() )
-		for i in range(1, len(resp)):
-			genre_dict[resp[i]['name']] = str(resp[i]['id'])
-			gg = Genre(gid = resp[i]['id'], name = resp[i]['name'], url = resp[i]['url'], last_modified_by_us = datetime.now())
-			gg.save()
+		try:
+			url = config['urls']['genre.getList']
+			resp = _parse_json( urllib2.urlopen(url).read() )
+			for i in range(1, len(resp)):
+				genre_dict[resp[i]['name']] = str(resp[i]['id'])
+				gg = Genre(gid = resp[i]['id'], name = resp[i]['name'], url = resp[i]['url'], last_modified_by_us = datetime.now())
+				gg.save()
+		except Exception, e:
+			logging.exception(e)
 	getGenreList = staticmethod(getGenreList)	
 			
 class SearchResults(list):
@@ -95,6 +102,12 @@ class Movie(models.Model):
 	""" getMovieInfo is used to fetch all info about a movie. It takes the id (MID) of the Movie, 
 		which can be obtained using the search method below. MID is an integer"""
 	def getMovieInfo(MID):
+		#this part fills the Genre Database, if its empty
+		cursor = connection.cursor()
+		cursor.execute("select * from fbcon_genre")
+		if cursor.rowcount <= 0:
+			Genre.getGenreList()
+			
 		try:
 			res = Movie.objects.filter(mid=MID)
 			cached = True
@@ -108,15 +121,23 @@ class Movie(models.Model):
 				resp = _parse_json( urllib2.urlopen(url).read() )[0]
 				m = Movie.parse(resp)
 				
-				s = m['released']
-				yy1 = int(s[0:4])
-				mm1 = int(s[5:7])
-				dd1 = int(s[8:])
-				s = m['last_modified_at']
-				yy2 = int(s[0:4])
-				mm2 = int(s[5:7])
-				dd2 = int(s[8:10])
-				
+				try:
+					s = m['released']
+					yy1 = int(s[0:4])
+					mm1 = int(s[5:7])
+					dd1 = int(s[8:])
+					d1 = date(yy1, mm1, dd1)
+				except Exception:
+					d1 = date(1900, 1, 1)
+				try:
+					s = m['last_modified_at']
+					yy2 = int(s[0:4])
+					mm2 = int(s[5:7])
+					dd2 = int(s[8:10])
+					d2 = date(yy2, mm2, dd2)
+				except Exception:
+					d2 = date(1900, 1, 1)
+					
 				movie = Movie(	mid = m['id'], 
 								imdb_id = m['imdb_id'], 
 								popularity = m['popularity'], 
@@ -140,8 +161,8 @@ class Movie(models.Model):
 								trailer = m['trailer'],
 								overview = m['overview'],
 								tagline = m['tagline'],
-								last_modified_by_tmdb = date(yy2, mm2, dd2),
-								released = date(yy1, mm1, dd1),
+								last_modified_by_tmdb = d2,
+								released = d1,
 								last_modified_by_us = datetime.now(),
 								posters = json.dumps(m['posters']),
 								backdrops = json.dumps(m['backdrops']),
@@ -163,7 +184,8 @@ class Movie(models.Model):
 			
 			else:
 				return res[0]
-		except Exception:
+		except Exception, e:
+			logging.exception(e)
 			return None
 	getMovieInfo = staticmethod(getMovieInfo)
 		
@@ -171,6 +193,7 @@ class Movie(models.Model):
 		get the id of a particular movie. tag is a string"""
 	def search(tag):
 		search_results = SearchResults()
+		tag = tag.replace(" ", "+")
 		try:
 			url = config['urls']['movie.search'] % (tag)
 			resp = _parse_json( urllib2.urlopen(url).read() )
@@ -178,7 +201,8 @@ class Movie(models.Model):
 				cur_result = Movie.parse(resp[i])
 				search_results.append(cur_result)
 			return search_results
-		except Exception:
+		except Exception, e:
+			logging.exception(e)
 			return SearchResults()
 	search = staticmethod(search)
 	
@@ -205,7 +229,8 @@ class Movie(models.Model):
 				cur_result = Movie.parse(resp[i])
 				search_results.append(cur_result)
 			return search_results
-		except Exception:
+		except Exception, e:
+			logging.exception(e)
 			return SearchResults()
 	browse = staticmethod(browse)
 		
