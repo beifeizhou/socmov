@@ -1,9 +1,11 @@
-hello world2
-{{ user }}
-zing zong
+{% extends "base.html" %}
+{% block title %} Your information {% endblock %}
+{% block body %}
+Welcome {{ profile.first_name }} <br>
 <h1> My friends </h1>
 {% for pair in friends %}
 	{{ pair.name }} => {{ pair.id }} <br>
 {% endfor %} 
 <h1> Movies that are liked </h1>
 {{ likes }}
+{% endblock %}

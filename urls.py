@@ -6,7 +6,8 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
 	(r'^login/$', 'fbcon.views.index'),
-	(r'^show/$', 'fbcon.views.show')
+	(r'^show/$', 'fbcon.views.show'),
+	(r'^movie/$', 'fbcon.views.showmov'),
     # Examples:
     # url(r'^$', 'socmov.views.home', name='home'),
     # url(r'^socmov/', include('socmov.foo.urls')),

@@ -6,8 +6,8 @@ import json
 import time
 import logging
 
-#logging.basicConfig(filename=errors.log, level=logging.DEBUG)
-#logging.debug('This message should go to the log file')
+from urlparse import urlparse
+from cgi import parse_qs
 
 _parse_json = lambda s: json.loads(s)
 config = {}
@@ -137,7 +137,15 @@ class Movie(models.Model):
 					d2 = date(yy2, mm2, dd2)
 				except Exception:
 					d2 = date(1900, 1, 1)
-					
+				
+				"""
+				TODO youtube trailer crap, currently a very stupid system """
+				m['trailer'] = parse_qs(urlparse(m['trailer']).query)
+				if m['trailer'].get('v'):
+					m['trailer'] = m['trailer']['v'][0]
+				else:
+					m['trailer'] = None 			
+				
 				movie = Movie(	mid = m['id'], 
 								imdb_id = m['imdb_id'], 
 								popularity = m['popularity'], 
@@ -179,14 +187,16 @@ class Movie(models.Model):
 				for i in range(0, len(obj)):
 					G = Genre.objects.get(gid = obj[i]['id'])
 					movie.genre.add(G)
-				
 				return movie
-			
 			else:
 				return res[0]
+
 		except Exception, e:
 			logging.exception(e)
 			return None
+		#except Exception as detail:
+			#print detail
+			#return None
 	getMovieInfo = staticmethod(getMovieInfo)
 		
 	""" search is used to find a list of movies that match your given 'tag'. It is particularly useful to 
@@ -215,7 +225,7 @@ class Movie(models.Model):
 		search_results = SearchResults()
 		try:
 			url = config['urls']['movie.browse'] % (order_by, order, top_x)
-			
+	
 			if len(genre) > 0:
 				G = Genre.objects.get(name = genre[0])
 				url += "&genres=" + str(G.gid)
@@ -233,6 +243,10 @@ class Movie(models.Model):
 			logging.exception(e)
 			return SearchResults()
 	browse = staticmethod(browse)
+	
+	def get_trailer_embed(self):
+		return "http://www.youtube.com/embed/" + str(self.trailer)
+	
 		
 		
 class User(models.Model):
@@ -306,7 +320,7 @@ class User(models.Model):
 		return u
 	get_current = staticmethod(get_current)
 	
-	def get_by_id(id):
+	def get_by_id(id, access_token):
 		r = User.objects.filter(uid=id)
 		cached = True
 		if len(r) == 0:
@@ -316,8 +330,9 @@ class User(models.Model):
 			if r.last_fetched < datetime.now() - timedelta(days=1):
 				cached = False
 			else:
+				print "returning cached user"
 				return r
-		r = fetch(id)
+		r = fetch(id, access_token)
 		r.save()
 		return r
 	get_by_id = staticmethod(get_by_id)
