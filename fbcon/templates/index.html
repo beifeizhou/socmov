@@ -3,5 +3,9 @@
 {% block body %} 
 <h1>SocMov</h1>
 <h3>A social movie recommendation system</h3>
-
+{% for m in movies %}
+	<div class="span-7{% if m.last == 3 %} last{% endif %}">
+	{% include "movie_compact.html" with mov=m.mov poster=m.poster %}
+	</div>
+{% endfor %}
 {% endblock %} 

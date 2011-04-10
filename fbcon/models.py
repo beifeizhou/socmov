@@ -268,6 +268,7 @@ class Movie(models.Model):
 				break
 		return {"mov"		: self,
 				"poster"	: poster}
+
 class User(models.Model):
 	username = models.CharField(max_length=128, null=True)
 	first_name = models.CharField(max_length=128, null=True)

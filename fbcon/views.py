@@ -16,7 +16,20 @@ FACEBOOK_API_KEY=settings.FACEBOOK_API_KEY    		# change to your facebook api ke
 FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app secret key
 
 def index(request):
-	return render_to_response('index.html')
+	
+	res = Movie.browse(order_by="rating", order="desc", top_x=3, genre=[]) 
+	movies = []
+	mod3 = 0
+	for mov in res:
+		mid = mov.get("id")
+		mod3 += 1
+		dic = Movie.getMovieInfo(mid).get_render_compact_dict()
+		dic['last'] = mod3
+		if mod3 == 3:
+			mod3 = 0
+		movies.append( dic )
+	
+	return render_to_response('index.html', {'movies' : movies})
 
 def login(request):
 	return render_to_response('login.html')
