@@ -247,8 +247,27 @@ class Movie(models.Model):
 	def get_trailer_embed(self):
 		return "http://www.youtube.com/embed/" + str(self.trailer)
 	
-		
-		
+	def get_render_dict(self):
+		posters = []
+		for i  in json.loads(self.posters):
+			posters.append( i['image'] )
+		backdrops = []
+		for i in json.loads(self.backdrops):
+			backdrops.append( i['image'] )
+		trailer = self.get_trailer_embed()
+		return	{"mov" 			: self, 
+				 "posters" 		: posters,
+				 "backdrops"	: backdrops, 
+				 "trailer" 		: trailer,
+				}
+	def get_render_compact_dict(self):
+		poster = None
+		for i in json.loads(self.posters):
+			if i['image']['size'] == 'thumb':
+				poster = i['image']
+				break
+		return {"mov"		: self,
+				"poster"	: poster}
 class User(models.Model):
 	username = models.CharField(max_length=128, null=True)
 	first_name = models.CharField(max_length=128, null=True)
@@ -266,10 +285,8 @@ class User(models.Model):
 	#json encoded strings
 	friends = models.TextField()
 	movies = models.TextField()
-
 	
 	last_fetched = models.DateTimeField()
-	
 	
 	def fetch(id, access_token):
 		id = str(id)
@@ -332,8 +349,13 @@ class User(models.Model):
 			else:
 				print "returning cached user"
 				return r
-		r = fetch(id, access_token)
+		r = User.fetch(id, access_token)
 		r.save()
 		return r
 	get_by_id = staticmethod(get_by_id)
 
+	def get_friends(self):
+		return json.loads(self.friends)
+	
+	def get_likes(self):
+		return json.loads(self.movies)

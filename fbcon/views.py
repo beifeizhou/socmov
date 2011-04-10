@@ -16,6 +16,9 @@ FACEBOOK_API_KEY=settings.FACEBOOK_API_KEY    		# change to your facebook api ke
 FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app secret key
 
 def index(request):
+	return render_to_response('index.html')
+
+def login(request):
 	return render_to_response('login.html')
 
 def show(request):
@@ -31,33 +34,26 @@ def show(request):
 		# a round-trip to Facebook on every request
 		x = User.get_by_id(cookie['uid'], cookie["access_token"])
 		profile = x
-		friends = json.loads(x.friends)
-		likes = json.loads(x.movies)
+		friends = x.get_friends()
+		likes = x.get_likes()
 	else :
 		friends = "Please log in :)"
 	return render_to_response('show.html', {"user" : profile, "friends" : friends, "likes" : likes})
 
-def showmov(request):
+def detail_mov(request):
 	params = request.REQUEST
-	
 	if params.get("id"):
 		mov = Movie.getMovieInfo(long(params.get("id")))
-		posters = []
-		for i  in json.loads(mov.posters):
-			posters.append( i['image'] )
-		backdrops = []
-		for i in json.loads(mov.backdrops):
-			backdrops.append( i['image'] )
-		trailer = mov.get_trailer_embed()
-		return render_to_response('movie.html', 
-									{"mov" : mov, 
-									 "posters" : posters,
-									 "backdrops" : backdrops, 
-									 "trailer" : trailer,
-									}
-								  )
-	elif params.get("name"):
-		pass
-		#m = Movie.getMovieInfo( long(params.get("id")) )
-		#return render_to_response('movie.html', m)
-	return render_to_response('movie.html')
+		return render_to_response('movie_detail.html', 
+									mov.get_render_dict()
+								 )
+	return render_to_response('index.html')
+
+#for testing alone
+def compact_mov(request):
+	params = request.REQUEST
+	if params.get("id"):
+		mov = Movie.getMovieInfo(long(params.get("id")))
+		return render_to_response('movie_compact.html', 
+									mov.get_render_compact_dict())
+	return render_to_response('index.html')

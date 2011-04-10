@@ -2,14 +2,21 @@
 <html>
 <head>
 	<title>{% block title %}Social Movie Recommendation Engine{% endblock %}</title>
-		{# <link rel="stylesheet" type="text/css" media="all" href="mycssfile"> #}
+		
+		<link rel="stylesheet" href="http://github.com/joshuaclayton/blueprint-css/raw/master/blueprint/screen.css" type="text/css" media="screen, projection">
+		<link rel="stylesheet" href="http://github.com/joshuaclayton/blueprint-css/raw/master/blueprint/print.css" type="text/css" media="print">
+		
 		<script src="http://connect.facebook.net/en_US/all.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+		
+		
 		{% block head %} {% endblock %}
 </head>
 <body>
+	<div class="container">
 	{% block body %} {% endblock %}
+	</div>
 </body>
 
 </html>

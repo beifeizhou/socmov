@@ -5,9 +5,11 @@ from django.conf.urls.defaults import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-	(r'^login/$', 'fbcon.views.index'),
+	(r'^$', 'fbcon.views.index'),
+	(r'^login/$', 'fbcon.views.login'),
 	(r'^show/$', 'fbcon.views.show'),
-	(r'^movie/$', 'fbcon.views.showmov'),
+	(r'^movie/$', 'fbcon.views.detail_mov'),
+	(r'^cmovie/$', 'fbcon.views.compact_mov'),
     # Examples:
     # url(r'^$', 'socmov.views.home', name='home'),
     # url(r'^socmov/', include('socmov.foo.urls')),

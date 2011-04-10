@@ -1,0 +1,33 @@
+{# renders a movie and takes mov - movie parameter #}
+{% if mov %}
+	<h1> {{ mov.name }} </h1>
+	<h3> {{ mov.tagline }} </h3>
+	{{ mov.rating }} from {{ mov.votes }} 
+	<p> {{mov.overview}}</p>
+	<h3> Covers </h3>
+	{% for v in posters %}
+	{% if v.size == 'cover' %}
+		<img src="{{ v.url }}">
+	{% endif %}
+	{% endfor %}
+	
+	<h3> Backdrops </h3>
+	{% for v in backdrops %}
+	{% if v.size == 'thumb' %}
+		<img src="{{ v.url }}">
+	{% endif %}
+	{% endfor %}
+	
+	<br>
+	<h3>Youtube trailer</h3>
+	<iframe class="youtube-player" 
+			type="text/html" 
+			width="640" 
+			height="385" 
+			src="{{ trailer }}" 
+			frameborder="0">
+	</iframe>
+	
+{% else %}
+	No movie mentioned
+{% endif %}

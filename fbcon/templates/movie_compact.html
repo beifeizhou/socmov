@@ -1,0 +1,14 @@
+{# renders a movie and takes mov - movie parameter #}
+{% if mov %}
+	<div class="span-2">
+		<img src="{{ poster.url }}">
+	</div>
+	<div class="span-4 last">
+		<a href="/movie?id={{ mov.mid }}"><h1> {{ mov.name }} </h1></a>
+		<h3> {{ mov.tagline }} </h3>
+		{{ mov.rating }} from {{ mov.votes }} 
+		<p> {{mov.overview}}</p>
+	</div>	
+{% else %}
+	No movie mentioned
+{% endif %}
