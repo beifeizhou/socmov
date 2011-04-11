@@ -9,6 +9,8 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+#Required for serving static files, for production make LOCAL_MEDIA = false , http://www.mail-archive.com/django-users@googlegroups.com/msg114788.html
+#Added stuff in urls.py for serving static
 SITEDIR = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
 ADMIN_MEDIA_PREFIX = '/m'
 MEDIA_URL = '/media/'
