@@ -1,4 +1,6 @@
 {# renders a movie and takes mov - movie parameter #}
+{% extends "base.html" %}
+{% block body %}
 {% if mov %}
 	<h1> {{ mov.name }} </h1>
 	<h3> {{ mov.tagline }} </h3>
@@ -6,15 +8,20 @@
 	<p> {{mov.overview}}</p>
 	<h3> Covers </h3>
 	{% for v in posters %}
-	{% if v.size == 'cover' %}
-		<img src="{{ v.url }}">
-	{% endif %}
+		{% if forloop.first %}
+			<a href = "{{ v.url }}" rel = "covers" > <img src="{{ v.url }}"/> </a>
+		{% else %}
+			<a href = "{{ v.url }}" rel = "covers"> </a>
+		{% endif %}
 	{% endfor %}
+	<br>
 	<h3> Backdrops </h3>
 	{% for v in backdrops %}
-	{% if v.size == 'thumb' %}
-		<img src="{{ v.url }}">
-	{% endif %}
+		{% if forloop.first %}
+			<a href = "{{ v.url }}" rel = "backdrops" > <img src="{{ v.url }}"/> </a>
+		{% else %}
+			<a href = "{{ v.url }}" rel = "backdrops"> </a>
+		{% endif %}
 	{% endfor %}
 	
 	<br>
@@ -30,3 +37,4 @@
 {% else %}
 	No movie mentioned
 {% endif %}
+{% endblock %}

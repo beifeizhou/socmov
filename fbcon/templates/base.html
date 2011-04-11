@@ -6,11 +6,26 @@
 		<link rel="stylesheet" href="http://github.com/joshuaclayton/blueprint-css/raw/master/blueprint/screen.css" type="text/css" media="screen, projection">
 		<link rel="stylesheet" href="http://github.com/joshuaclayton/blueprint-css/raw/master/blueprint/print.css" type="text/css" media="print">
 		
+		
 		<script src="http://connect.facebook.net/en_US/all.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
-		
+		<link media="screen" rel="stylesheet" href="/media/colorbox.css" />
+		<script src = "/media/jquery.colorbox.js"></script>
+		<script>
+			$(document).ready(function(){
+			$("a[rel='backdrops']").colorbox({transition:"fade", width : "60%" , height:"60%"});
+			$("a[rel='covers']").colorbox({slideshow:true });
+			$(".video").colorbox({iframe:true, innerWidth:425, innerHeight:344});
+		});
+			$("#click").click(function(){ 
+				$('#click').css({"background-color":"#f00", "color":"#fff", "cursor":"inherit"}).text("Open this window again and this message will still be here.");
+				return false;
+			});
+		</script>
+
 		{% block head %} {% endblock %}
+
 </head>
 <body>
 	<div id="fb-root"></div>

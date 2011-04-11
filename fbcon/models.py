@@ -250,10 +250,12 @@ class Movie(models.Model):
 	def get_render_dict(self):
 		posters = []
 		for i  in json.loads(self.posters):
-			posters.append( i['image'] )
+			if i['image']['size'] == 'cover':
+				posters.append( i['image'] )
 		backdrops = []
 		for i in json.loads(self.backdrops):
-			backdrops.append( i['image'] )
+			if i['image']['size'] == 'thumb':
+				backdrops.append( i['image'] )
 		trailer = self.get_trailer_embed()
 		return	{"mov" 			: self, 
 				 "posters" 		: posters,

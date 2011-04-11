@@ -9,7 +9,11 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
+SITEDIR = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+ADMIN_MEDIA_PREFIX = '/m'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join( SITEDIR, 'socmov', 'media' )
+LOCAL_MEDIA = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -24,6 +28,9 @@ DATABASES = {
     }
 }
 
+def path(*x):
+    return os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+    
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -49,12 +56,12 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+#MEDIA_ROOT = path( 'media' )
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+#MEDIA_URL = '../media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -69,7 +76,7 @@ STATIC_URL = '/static/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+#ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -110,6 +117,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    path( 'templates' ),
 )
 
 INSTALLED_APPS = (

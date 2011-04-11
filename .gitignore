@@ -3,3 +3,5 @@
 *.pot
 local_settings.py
 install/*
+apache/*
+logs/*
