@@ -10,7 +10,7 @@
 			<h3> {{ mov.name }} </h3>
 		</a>
 		<h4> {{ mov.tagline }} </h4>
-		{{ mov.rating }} from {{ mov.votes }} on <a href="http://tmdb.org">TMDB</a>
+		<span class="rating">{{ mov.rating }}</span> from {{ mov.votes }} on <a href="http://tmdb.org">TMDB</a>
 		{# <p> {{mov.overview}}</p> #}
 	</div>	
 {% else %}

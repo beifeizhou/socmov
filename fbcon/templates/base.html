@@ -21,9 +21,28 @@
 				return false;
 			});
 		</script>
-
+		<style type="text/css">
+			body {
+				background: black;
+			}
+			.container {
+				background: white;
+				border-left: 20px white solid;
+				border-right: 20px white solid;
+			}
+			.header {
+				background: black;
+				border-left: 20px black solid;
+				border-right: 20px black solid;
+			}
+			.header h3, .header h1 {
+				color: white;
+			}
+			.rating {
+				font-size:15px;
+			}
+		</style>
 		{% block head %} {% endblock %}
-
 </head>
 <body>
 	<div id="fb-root"></div>
@@ -52,8 +71,17 @@
 		});
     </script>
 	
+	<div class="header container">
+		<h1>SocMov</h1>
+		<h3>A social movie recommendation system</h3>
+	</div>
 	<div class="container">
+	
 	{% block body %} {% endblock %}
+	</div>
+	
+	<div class="header container">
+		<h3>About Us | Terms | Help</h3>
 	</div>
 </body>
 
