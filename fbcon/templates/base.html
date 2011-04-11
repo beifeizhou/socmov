@@ -10,10 +10,35 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
 		
-		
 		{% block head %} {% endblock %}
 </head>
 <body>
+	<div id="fb-root"></div>
+	<script type="text/javascript">
+         FB.init({ 
+            appId:'188365901207571', cookie:true, 
+            status:true, xfbml:true 
+         });
+         /*
+         FB.getLoginStatus(function(response) {
+		  if (response.session) {
+			window.location = "/show"
+		  } else {
+			
+		  }
+		});
+		FB.Event.subscribe('auth.login', function (response) {
+			window.location = "/show" 
+		});*/
+		FB.getLoginStatus(function(response) {
+		  if (response.session) {
+			console.log("logged in getLoginStatus");
+		  } else {
+			
+		  }
+		});
+    </script>
+	
 	<div class="container">
 	{% block body %} {% endblock %}
 	</div>

@@ -17,7 +17,7 @@ config['urls']['movie.search'] = "http://api.themoviedb.org/2.1/Movie.search/en/
 config['urls']['movie.getInfo'] = "http://api.themoviedb.org/2.1/Movie.getInfo/en/json/%(apikey)s/%%s" % (config)
 config['urls']['media.getInfo'] = "http://api.themoviedb.org/2.1/Media.getInfo/en/json/%(apikey)s/%%s/%%s" % (config)
 config['urls']['imdb.lookUp'] = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/json/%(apikey)s/%%s" % (config)
-config['urls']['movie.browse'] = "http://api.themoviedb.org/2.1/Movie.browse/en/json/%(apikey)s?order_by=%%s&order=%%s&page=1&per_page=%%s&min_votes=10" % (config)
+config['urls']['movie.browse'] = "http://api.themoviedb.org/2.1/Movie.browse/en/json/%(apikey)s?order_by=%%s&order=%%s&page=1&per_page=%%s&min_votes=100" % (config)
 config['urls']['genre.getList'] = "http://api.themoviedb.org/2.1/Genres.getList/en/json/%(apikey)s" % (config)
 offest = 2629743 * 3 #1 month = 2629743 seconds
 genre_dict = {}

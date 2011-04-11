@@ -1,12 +1,7 @@
  {% extends "base.html" %}
  {% block title %} Login {% endblock %}
  {% block body %} 
-      <div id="fb-root"></div>
-      <script>
-         FB.init({ 
-            appId:'188365901207571', cookie:true, 
-            status:true, xfbml:true 
-         });
+      <script type="text/javascript">
          FB.getLoginStatus(function(response) {
 		  if (response.session) {
 			window.location = "/show"
@@ -14,12 +9,6 @@
 			
 		  }
 		});
-		FB.Event.subscribe('auth.login', function (response) {
-			window.location = "/show" 
-		});
       </script>
-      
-	  <fb:login-button 
-	  onlogin="loginEvent()"
-	  perms="user_activities,user_hometown,user_interests,user_likes,user_location,user_relationships,user_religion_politics,user_work_history,offline_access">Login with Facebook</fb:login-button>
+      {% include "fblogin.html" %}
 {% endblock %}

@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 {% block title %} SocMov {% endblock %}
 {% block body %} 
+
+{% if user %}
+	Welcome, {{ user.first_name }} <br>
+{% else %}
+	{% include "fblogin.html" %}
+{% endif %}
 <h1>SocMov</h1>
 <h3>A social movie recommendation system</h3>
 {% for m in movies %}
-	<div class="span-7{% if m.last == 3 %} last{% endif %}">
+	{% if m.last == 1 %} <div class="span-24 last" style="margin-bottom:30px"> {% endif %}
+	<div class="span-8{% if m.last == 3 %} last{% endif %}">
 	{% include "movie_compact.html" with mov=m.mov poster=m.poster %}
 	</div>
+	{% if m.last == 3 %} </div> {% endif %}
 {% endfor %}
 {% endblock %} 
