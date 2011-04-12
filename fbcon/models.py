@@ -90,7 +90,6 @@ class Movie(models.Model):
 	cast = models.TextField(null = True)
 	countries = models.TextField(null = True)
 	genres = models.TextField(null = True)
-	rating_percent = models.IntegerField(null = True)	
 	
 	def parse(current):
 		ret = MovieResult()
@@ -182,7 +181,6 @@ class Movie(models.Model):
 								cast = json.dumps(m['cast']),
 								keywords = json.dumps(m['keywords']),
 								genres = json.dumps(m['genres']),
-								rating_percent = int(m['rating'] * 10)
 							)
 				
 				movie.save()
@@ -220,6 +218,9 @@ class Movie(models.Model):
 			return SearchResults()
 	search = staticmethod(search)
 	
+	def rating_percent(self):
+		return int(self.rating*10)
+		
 	""" browse method is used to fetch top_x number of movies, based on the following parameters:
 		order_by: 	["rating", "release", "title"]
 		order: 		["asc", "desc"]
