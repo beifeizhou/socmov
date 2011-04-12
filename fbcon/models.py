@@ -140,9 +140,11 @@ class Movie(models.Model):
 				
 				"""
 				TODO youtube trailer crap, currently a very stupid system """
-				m['trailer'] = parse_qs(urlparse(m['trailer']).query)
-				if m['trailer'].get('v'):
-					m['trailer'] = m['trailer']['v'][0]
+				
+				if m['trailer']:
+					m['trailer'] = parse_qs(urlparse(m['trailer']).query)
+					if m['trailer'].get('v'):
+						m['trailer'] = m['trailer']['v'][0]
 				else:
 					m['trailer'] = None 			
 				
@@ -245,8 +247,10 @@ class Movie(models.Model):
 	browse = staticmethod(browse)
 	
 	def get_trailer_embed(self):
-		return "http://www.youtube.com/embed/" + str(self.trailer)
-	
+		if self.trailer:
+			return "http://www.youtube.com/embed/" + str(self.trailer)
+		return None
+
 	def get_render_dict(self):
 		posters = []
 		for i  in json.loads(self.posters):

@@ -25,15 +25,16 @@
 	{% endfor %}
 	
 	<br>
-	<h3>Youtube trailer</h3>
-	<iframe class="youtube-player" 
-			type="text/html" 
-			width="640" 
-			height="385" 
-			src="{{ trailer }}" 
-			frameborder="0">
-	</iframe>
-	
+	{% if trailer %}
+		<h3>Youtube trailer</h3>
+		<iframe class="youtube-player" 
+				type="text/html" 
+				width="640" 
+				height="385" 
+				src="{{ trailer }}" 
+				frameborder="0">
+		</iframe>
+	{% endif %}
 {% else %}
 	No movie mentioned
 {% endif %}
