@@ -9,7 +9,7 @@
 	<h3> Covers </h3>
 	{% for v in posters %}
 		{% if forloop.first %}
-			<a href = "{{ v.url }}" rel = "covers" > <img src="{{ v.url }}" width = "400" height "500"/> </a>
+			<a href = "{{ v.url }}" rel = "covers" > <img src="{{ v.url }}" width = "200" height "300"/> </a>
 		{% else %}
 			<a href = "{{ v.url }}" rel = "covers"> </a>
 		{% endif %}

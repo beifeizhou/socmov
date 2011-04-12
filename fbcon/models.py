@@ -90,7 +90,8 @@ class Movie(models.Model):
 	cast = models.TextField(null = True)
 	countries = models.TextField(null = True)
 	genres = models.TextField(null = True)
-		
+	rating_percent = models.IntegerField(null = True)	
+	
 	def parse(current):
 		ret = MovieResult()
 		keys = current.keys()
@@ -178,7 +179,8 @@ class Movie(models.Model):
 								studios = json.dumps(m['studios']),
 								cast = json.dumps(m['cast']),
 								keywords = json.dumps(m['keywords']),
-								genres = json.dumps(m['genres'])
+								genres = json.dumps(m['genres']),
+								rating_percent = int(m['rating'] * 10)
 							)
 				
 				movie.save()
