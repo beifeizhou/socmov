@@ -5,6 +5,7 @@
 		
 		<link rel="stylesheet" href="/media/screen.css" type="text/css" media="screen, projection">
 		<link rel="stylesheet" href="/media/print.css" type="text/css" media="print">
+<<<<<<< HEAD
 		<script src="http://connect.facebook.net/en_US/all.js"></script>
 		<script src="/media/jquery.min.js"></script>
 		<script src="/media/jquery-ui.min.js"></script>
@@ -12,19 +13,29 @@
 		<link rel="stylesheet" href="/media/ratings.css" />
 		<script src = "/media/jquery.colorbox.js"></script>
 		<script>
+=======
+		<link rel="stylesheet" href="/media/colorbox.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="/media/base.css" type="text/css" media="screen">
+		
+		<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
+		<script type="text/javascript" src="/media/jquery.min.js"></script>
+		<script type="text/javascript" src="/media/jquery-ui.min.js"></script>
+		<script type="text/javascript" src = "/media/jquery.colorbox.js"></script>
+		<script type="text/javascript">
+>>>>>>> 02aa976ea1905044d3d4a17abbf24422769bda7d
 			$(document).ready(function(){
-			$("a[rel='backdrops']").colorbox({transition:"fade", height :500 , width : 700 });
-			$("a[rel='covers']").colorbox({slideshow:true , height : 500 , width:700 });
-			$(".video").colorbox({iframe:true, innerWidth:425, innerHeight:344});
-		});
+				$("a[rel='backdrops']").colorbox({transition:"fade", width : "60%" , height:"60%"});
+				$("a[rel='covers']").colorbox({slideshow:true });
+				$(".video").colorbox({iframe:true, innerWidth:425, innerHeight:344});
+			});
+
 			$("#click").click(function(){ 
-				$('#click').css({"background-color":"#f00", "color":"#fff", "cursor":"inherit"}).text("Open this window again and this message will still be here.");
+				$('#click')	.css({"background-color":"#f00", "color":"#fff", "cursor":"inherit"})
+							.text("Open this window again and this message will still be here.");
 				return false;
 			});
 		</script>
-
 		{% block head %} {% endblock %}
-
 </head>
 <body>
 	<div id="fb-root"></div>
@@ -51,10 +62,16 @@
 			
 		  }
 		});
-    </script>
-	
+    </script>	
+	<div class="header container">
+		<h1>SocMov</h1>
+		<h3>A social movie recommendation system</h3>
+	</div>
 	<div class="container">
 	{% block body %} {% endblock %}
+	</div>
+	<div class="header container">
+		<h3>About Us | Terms | Help</h3>
 	</div>
 </body>
 

@@ -3,14 +3,23 @@
 {% block body %} 
 
 {% if user %}
-	Welcome, {{ user.first_name }} <br>
+	<p>Welcome, {{ user.first_name }}</p>
 {% else %}
 	{% include "fblogin.html" %}
 {% endif %}
-<h1>SocMov</h1>
-<h3>A social movie recommendation system</h3>
+
+<h3><a href="#invite_friends" id="invFriends"> Invite your friends</a></h3>
+
+<script type="text/javascript">
+$('#invFriends').click(function(){
+	FB.ui({	method	: 'apprequests', 
+			message	: 'Discover movies. Socially.', 
+			data	: 'tracking information for the user'});
+});
+</script>
+
 {% for m in movies %}
-	{% if m.last == 1 %} <div class="span-24 last" style="margin-bottom:30px"> {% endif %}
+	{% if m.last == 1 %} <div class="span-24 last" style="margin-bottom:30px">  {% endif %}
 	<div class="span-8{% if m.last == 3 %} last{% endif %}">
 	{% include "movie_compact.html" with mov=m.mov poster=m.poster %}
 	</div>
