@@ -297,6 +297,7 @@ class User(models.Model):
 	movies = models.TextField()
 	
 	last_fetched = models.DateTimeField()
+	movie = models.ManyToManyField(Movie, through = "Vote")
 	
 	def fetch(id, access_token):
 		id = str(id)
@@ -369,3 +370,27 @@ class User(models.Model):
 	
 	def get_likes(self):
 		return json.loads(self.movies)
+		
+	""" add_movie function is called when a user likes/dislikes a movie. It relates a movie with a user 
+		r = 0 means dislike
+		r = 1 means like """
+	def add_movie(self, mov, r):
+		v = Vote(movie = mov, user = self, last_updated = datetime.now(), rating = r)
+		v.save()
+	
+	""" get_friends_like function is used to find all the friends which like the given Movie mov """	
+	def get_friends_like(self, mov):
+		fr = self.get_friends()
+		ids = []
+		for f in fr:
+			ids.append(f['id'])
+			
+		ret = User.objects.filter(uid__in = ids).filter(movie__mid = mov.mid).filter(vote__rating = 1)
+		return ret
+
+
+class Vote(models.Model):
+	movie = models.ForeignKey(Movie)
+	user = models.ForeignKey(User)
+	last_updated = models.DateTimeField()
+	rating = models.IntegerField()
