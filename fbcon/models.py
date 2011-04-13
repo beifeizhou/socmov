@@ -375,6 +375,9 @@ class User(models.Model):
 		r = 0 means dislike
 		r = 1 means like """
 	def add_movie(self, mov, r):
+		a = Vote.objects.filter(movie__mid = mov.mid).filter(user__uid = self.uid)
+		if len(a) > 0:
+			a.delete()
 		v = Vote(movie = mov, user = self, last_updated = datetime.now(), rating = r)
 		v.save()
 	
