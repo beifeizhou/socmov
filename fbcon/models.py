@@ -345,6 +345,14 @@ class User(models.Model):
 		#caching / use cookies maybe needed here
 		u = User.fetch_current(access_token)
 		u.save()
+		
+		try:
+			m = json.loads(u.movies)
+			for i in m:
+				M = Movie.search(i["name"])[0]
+				u.add_movie( Movie.getMovieInfo(M['id']), 1 )
+		except Exception, e:
+			logging.exception(e)
 		return u
 	get_current = staticmethod(get_current)
 	
@@ -362,6 +370,15 @@ class User(models.Model):
 				return r
 		r = User.fetch(id, access_token)
 		r.save()
+		
+		try:
+			m = json.loads(r.movies)
+			for i in m:
+				M = Movie.search(i["name"])[0]
+				r.add_movie( Movie.getMovieInfo(M['id']), 1 )
+		except Exception, e:
+			logging.exception(e)
+		
 		return r
 	get_by_id = staticmethod(get_by_id)
 
