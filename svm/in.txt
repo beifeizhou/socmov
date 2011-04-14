@@ -1,0 +1,8 @@
+male
+Single
+India
+Women
+English Hindi Gujarati French Marathi
+1 0 1
+0
+22
