@@ -1,7 +1,7 @@
 <VirtualHost *:80>
 	ServerAdmin webmaster@localhost
 
-	DocumentRoot /home/maniks/socmov/
+	DocumentRoot /home/maniks/socmov
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride None
