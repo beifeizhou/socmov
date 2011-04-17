@@ -407,6 +407,18 @@ class User(models.Model):
 			
 		ret = User.objects.filter(uid__in = ids).filter(movie__mid = mov.mid).filter(vote__rating = 1)
 		return ret
+		
+	def get_movie_likes(self):
+		ret = Movie.objects.filter(vote__user = self).filter(vote__rating = 1)
+		r = []
+		i = 0
+		while i < len(ret):
+			r.append(ret[i])
+			j = i + 1
+			while j < len(ret) and ret[j].mid == ret[i].mid:
+				j = j + 1
+			i = j
+		return r
 
 
 class Vote(models.Model):
