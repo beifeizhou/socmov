@@ -40,12 +40,12 @@ sudo ln -s /etc/apache2/sites-available/localhost /etc/apache2/sites-enabled/loc
 sudo cp -R --preserve server_setup/ports.conf /etc/apache2/ports.conf
 
 #nginx
-sudo cp -R --preserve server_setup/nginx.conf /etc/nginx/nginx.conf
-sudo cp -R --preserve server_setup/proxy.conf /etc/nginx/proxy.conf
-sudo cp -R --preserve server_setup/localhost_nginx /etc/nginx/sites-available/localhost
+#sudo cp -R --preserve server_setup/nginx.conf /etc/nginx/nginx.conf
+#sudo cp -R --preserve server_setup/proxy.conf /etc/nginx/proxy.conf
+#sudo cp -R --preserve server_setup/localhost_nginx /etc/nginx/sites-available/localhost
 
-replace $DEFAULT_PATH $CUR_PATH /etc/nginx/sites-available/localhost
-sudo ln -s /etc/nginx/sites-available/localhost /etc/nginx/sites-enabled/localhost
+#replace $DEFAULT_PATH $CUR_PATH /etc/nginx/sites-available/localhost
+#sudo ln -s /etc/nginx/sites-available/localhost /etc/nginx/sites-enabled/localhost
 
 
 #apache directory in django project, copying the wsgi file
@@ -62,4 +62,4 @@ export DJANGO_SETTINGS_MODULE=socmov.settings
 
 #restart apache and nginx
 sudo /etc/init.d/apache2 restart 
-sudo /etc/init.d/nginx restart 
+#sudo /etc/init.d/nginx restart 

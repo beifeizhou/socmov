@@ -56,5 +56,5 @@ mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS socmovdb;"
 #Apache stuff
 sudo apt-get install sed
 sudo apt-get install apache2.2-common apache2
-sudo apt-get install nginx
+#sudo apt-get install nginx
 sudo apt-get install libapache2-mod-wsgi
