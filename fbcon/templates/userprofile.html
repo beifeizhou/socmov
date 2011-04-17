@@ -3,7 +3,7 @@
 {% block body %} 
 
 {% if user %}
-	<p>Welcome, <a href = "/userprofile">{{ user.first_name }}</a></p>
+	<p>Welcome, <a href = "/userprofile">{{ user.first_name }}</a> <a href = "/">Go back</a></p>
 {% else %}
 	{% include "fblogin.html" %}
 {% endif %}

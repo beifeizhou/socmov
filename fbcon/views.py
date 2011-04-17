@@ -47,6 +47,23 @@ def index(request):
 		movies.append( dic )
 	
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
+	
+def profile_user(request):
+	profile, friends, likes = get_fb_details(request.COOKIES)
+	res = profile.get_movie_likes()
+	movies = []
+	mod3 = 0
+	
+	for mov in res:
+		mid = mov.mid
+		mod3 += 1
+		dic = Movie.getMovieInfo(mid).get_render_compact_dict()
+		dic['last'] = mod3
+		if mod3 == 3:
+			mod3 = 0
+		movies.append( dic )
+	
+	return render_to_response('userprofile.html', {'movies' : movies, "user" : profile})
 
 def login(request):
 	return render_to_response('login.html')
