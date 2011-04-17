@@ -1,5 +1,5 @@
 A social movie recommendation engine
-Authors: Pratik Tandel, Krunal Manik
+Authors: Pratik Tandel, Krunal Manik, Purav Shah
 
 A SVM-based recommendation engine that uses data from the social graph on 
 Facebook and uses data about movies from TMDB API.
@@ -13,6 +13,9 @@ Requirements:
 
 Installation:
  - Run installer.sh in root folder.
+ - Run server_install.sh
+   Command : bash server_install.sh [ipaddress][servername]
+       Eg. : Run "bash server_install.sh 8.8.8.8 google.com" for www.google.com
  - If you wish you may delete the install folder after the installation
  
 
