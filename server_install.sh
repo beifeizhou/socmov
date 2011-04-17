@@ -53,8 +53,8 @@ sudo cp -R --preserve server_setup/socmov.wsgi apache/socmov.wsgi
 replace $DEFAULT_PATH $CUR_PATH apache/socmov.wsgi
 
 #Document root
-sudo cp -R --preserve server_setup/default /etc/apache2/sites-available/default
-replace $DEFAULT_PATH $CUR_PATH /etc/apache2/sites-available/default
+#sudo cp -R --preserve server_setup/default /etc/apache2/sites-available/default
+#replace $DEFAULT_PATH $CUR_PATH /etc/apache2/sites-available/default
 
 #final command needed to run for apache : http://forum.webfaction.com/viewtopic.php?id=2282
 export DJANGO_SETTINGS_MODULE=socmov.settings
