@@ -2,6 +2,9 @@ cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat repos.txt >> /etc/apt/sources.list
 apt-get update
 
+mkdir apache
+mkdir logs
+mkdir media
 mkdir install
 cd install
 
@@ -50,3 +53,8 @@ mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS socmovdb;"
 #sudo apt-get install libsvm-tools
 #sudo apt-get install libsvm-dev
 #sudo apt-get install python-libsvm
+#Apache stuff
+sudo apt-get install sed
+sudo apt-get install apache2.2-common apache2
+sudo apt-get install nginx
+sudo apt-get install libapache2-mod-wsgi
