@@ -18,15 +18,17 @@ MEDIA_ROOT = os.path.join( SITEDIR, 'socmov', 'media' )
 LOCAL_MEDIA = True
 DATABASES = {
     'default': {
+    
+        #'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        #'OPTIONS': {
+        #    'read_default_file': os.getcwd() + '/my.cnf',
+        #},
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'OPTIONS': {
-            'read_default_file': os.getcwd() + '/my.cnf',
-        },
-        # 'NAME': '',                      # Or path to database file if using sqlite3.
-        # 'USER': '',                      # Not used with sqlite3.
-        # 'PASSWORD': '',                  # Not used with sqlite3.
-        # 'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        # 'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'NAME': 'socmovdb',                      # Or path to database file if using sqlite3.
+        'USER': 'root',                      # Not used with sqlite3.
+        'PASSWORD': 'passw0rd',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
