@@ -53,6 +53,7 @@ def get_fb_details(cookies):
 		likes = x.get_likes()
 	return profile, friends, likes
 
+
 def index(request):
 	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, genre=[]) 
 	res = []
@@ -98,3 +99,17 @@ def compact_mov(request):
 		return render_to_response('movie_compact.html', 
 									mov.get_render_compact_dict())
 	return render_to_response('index.html')
+
+def vote(request):
+	params = request.REQUEST
+	cookies = request.COOKIES
+	user = get_fb_details(cookies)[0] 
+	if user:
+		if params.get("movieid"):
+			vote = 1 if params.get("type") == "true" else 0
+			mov = Movie.getMovieInfo( params.get("movieid") )
+			if mov:
+				user.add_movie( mov=mov, rating=vote )
+		resp_string = "Vote successfully added for movie %s (%d)", (mov.name , mov.mid)
+		return HttpResponse(resp_string)
+	return HttpResponseForbidden("You're not allowed to make this vote. Probably because you've logged out.")

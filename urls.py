@@ -11,6 +11,7 @@ urlpatterns = patterns('',
 	(r'^movie/$', 'fbcon.views.detail_mov'),
 	(r'^userprofile/$', 'fbcon.views.profile_user'),
 	(r'^cmovie/$', 'fbcon.views.compact_mov'),
+	(r'^vote/$', 'fbcon.views.vote'),
     # Examples:
     # url(r'^$', 'socmov.views.home', name='home'),
     # url(r'^socmov/', include('socmov.foo.urls')),

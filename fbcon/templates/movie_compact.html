@@ -16,6 +16,7 @@
 		</div>
 		<span class="rating">{{ mov.rating }}</span> from {{ mov.votes }} on <a href="http://tmdb.org">TMDB</a>
 		{# <p> {{mov.overview}}</p> #}
+		{% include "vote.html" with movieid=mov.mid %} 		
 	</div>	
 {% else %}
 	No movie mentioned

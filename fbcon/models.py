@@ -391,11 +391,11 @@ class User(models.Model):
 	""" add_movie function is called when a user likes/dislikes a movie. It relates a movie with a user 
 		r = 0 means dislike
 		r = 1 means like """
-	def add_movie(self, mov, r):
+	def add_movie(self, mov, rating):
 		a = Vote.objects.filter(movie__mid = mov.mid).filter(user__uid = self.uid)
 		if len(a) > 0:
 			a.delete()
-		v = Vote(movie = mov, user = self, last_updated = datetime.now(), rating = r)
+		v = Vote(movie = mov, user = self, last_updated = datetime.now(), rating = rating)
 		v.save()
 	
 	""" get_friends_like function is used to find all the friends which like the given Movie mov """	
