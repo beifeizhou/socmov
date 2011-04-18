@@ -10,6 +10,7 @@ urlpatterns = patterns('',
 	(r'^show/$', 'fbcon.views.show'),
 	(r'^movie/$', 'fbcon.views.detail_mov'),
 	(r'^user/$', 'fbcon.views.profile_user'),
+	(r'^search/$', 'fbcon.views.search_movies'),
 	(r'^cmovie/$', 'fbcon.views.compact_mov'),
 	(r'^vote/$', 'fbcon.views.vote'),
     # Examples:

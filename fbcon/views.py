@@ -77,6 +77,19 @@ def profile_user(request):
 		res.append(mov.mid)
 	movies = transform_to_grid(res, user=profile)
 	return render_to_response('user.html', {'movies' : movies, "user" : profile})
+	
+def search_movies(request):
+	profile, friends, likes = get_fb_details(request.COOKIES)
+	params = request.REQUEST
+	res = []
+	if params.get("query"):
+		search_res = Movie.search( params.get("query") )
+		res = []
+		for mov in search_res:
+			res.append( mov.get("id") )
+		movies = transform_to_grid(res)
+		return render_to_response('search.html', {'movies' : movies, "user" : profile})
+	
 
 def login(request):
 	return render_to_response('login.html')

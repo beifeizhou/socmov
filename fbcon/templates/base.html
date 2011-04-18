@@ -49,6 +49,14 @@
 		<h3>A social movie recommendation system</h3>
 	</div>
 	<div class="container">
+	<div align = "right">
+		<form action = "/search" method = "get">
+			<input type = "text" name = "query" />
+			<input type = "submit" value = "Search" />
+		</form>
+	</div>
+	<div id="flash_notice"> </div>
+	
 	{% block body %} {% endblock %}
 	</div>
 	<br>
