@@ -71,7 +71,7 @@ def profile_user(request):
 	for mov in search_res:
 		res.append(mov.mid)
 	movies = transform_to_grid(res)
-	return render_to_response('userprofile.html', {'movies' : movies, "user" : profile})
+	return render_to_response('user.html', {'movies' : movies, "user" : profile})
 
 def login(request):
 	return render_to_response('login.html')

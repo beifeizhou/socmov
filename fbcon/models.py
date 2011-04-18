@@ -210,6 +210,7 @@ class Movie(models.Model):
 			url = config['urls']['movie.search'] % (tag)
 			resp = _parse_json( urllib2.urlopen(url).read() )
 			for i in range(0, len(resp)):
+				print resp[i]
 				cur_result = Movie.parse(resp[i])
 				search_results.append(cur_result)
 			return search_results
@@ -237,8 +238,9 @@ class Movie(models.Model):
 				for i in range(1, len(genre)):
 					G = Genre.objects.get(name = genre[i])
 					url += "," + str(G.gid)
-				url += "&genres_selector=and"
-			
+				if len(genre) > 1:
+					url += "&genres_selector=and"
+			#print url
 			resp = _parse_json( urllib2.urlopen(url).read() )
 			for i in range(0, len(resp)):
 				cur_result = Movie.parse(resp[i])
@@ -346,13 +348,15 @@ class User(models.Model):
 		u = User.fetch_current(access_token)
 		u.save()
 		
-		try:
-			m = json.loads(u.movies)
-			for i in m:
+		m = json.loads(r.movies)
+		for i in m:
+			try:
 				M = Movie.search(i["name"])[0]
+				if len(M) < 1:
+					continue
 				u.add_movie( Movie.getMovieInfo(M['id']), 1 )
-		except Exception, e:
-			logging.exception(e)
+			except Exception, e:
+				logging.exception(e)
 		return u
 	get_current = staticmethod(get_current)
 	
@@ -371,14 +375,16 @@ class User(models.Model):
 		r = User.fetch(id, access_token)
 		r.save()
 		
-		try:
-			m = json.loads(r.movies)
-			for i in m:
-				M = Movie.search(i["name"])[0]
-				r.add_movie( Movie.getMovieInfo(M['id']), 1 )
-		except Exception, e:
-			logging.exception(e)
 		
+		m = json.loads(r.movies)
+		for i in m:
+			try:
+				M = Movie.search(i["name"])[0]
+				if len(M) < 1:
+					continue
+				r.add_movie( Movie.getMovieInfo(M['id']), 1 )
+			except Exception, e:
+				logging.exception(e)
 		return r
 	get_by_id = staticmethod(get_by_id)
 
@@ -392,6 +398,8 @@ class User(models.Model):
 		r = 0 means dislike
 		r = 1 means like """
 	def add_movie(self, mov, rating):
+		if mov == None:
+			return
 		a = Vote.objects.filter(movie__mid = mov.mid).filter(user__uid = self.uid)
 		if len(a) > 0:
 			a.delete()

@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 	(r'^login/$', 'fbcon.views.login'),
 	(r'^show/$', 'fbcon.views.show'),
 	(r'^movie/$', 'fbcon.views.detail_mov'),
-	(r'^userprofile/$', 'fbcon.views.profile_user'),
+	(r'^user/$', 'fbcon.views.profile_user'),
 	(r'^cmovie/$', 'fbcon.views.compact_mov'),
 	(r'^vote/$', 'fbcon.views.vote'),
     # Examples:
