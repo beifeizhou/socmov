@@ -196,9 +196,6 @@ class Movie(models.Model):
 		except Exception, e:
 			logging.exception(e)
 			return None
-		#except Exception as detail:
-			#print detail
-			#return None
 	getMovieInfo = staticmethod(getMovieInfo)
 		
 	""" search is used to find a list of movies that match your given 'tag'. It is particularly useful to 
@@ -370,7 +367,6 @@ class User(models.Model):
 			if r.last_fetched < datetime.now() - timedelta(days=1):
 				cached = False
 			else:
-				print "returning cached user"
 				return r
 		r = User.fetch(id, access_token)
 		r.save()
