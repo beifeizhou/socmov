@@ -110,6 +110,6 @@ def vote(request):
 			mov = Movie.getMovieInfo( params.get("movieid") )
 			if mov:
 				user.add_movie( mov=mov, rating=vote )
-		resp_string = "Vote successfully added for movie %s (%d)", (mov.name , mov.mid)
+		resp_string = "Vote successfully added for movie ", mov.name , " (", mov.mid ,")"
 		return HttpResponse(resp_string)
 	return HttpResponseForbidden("You're not allowed to make this vote. Probably because you've logged out.")
