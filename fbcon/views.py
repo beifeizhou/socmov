@@ -46,6 +46,7 @@ def adhoc_ranking_algorithm(mov_list, user):
 		
 		score = 300* pow(genre_count, 4.0)
 		score += 2 * pow(mov.rating_percent()/10., 1.5)
+		score += 100 * pow(mov.votes, 1.2)
 		score += 0.005 * mov.rating_percent() * (1 + mov.votes)
 		
 		#social factor
@@ -105,13 +106,13 @@ def get_fb_details(cookies):
 
 def index(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
-	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, min_votes = 20, genre=[]) 
+	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, min_votes = 70, genre=[]) 
 	res = []
 	
 	for mov in search_res:
 		res.append( mov.get("id") )
 	res = adhoc_ranking_algorithm(res, profile)
-	res = res[0:45]
+	res = res[0:30]
 	movies = transform_to_grid(res, user=profile)
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	
