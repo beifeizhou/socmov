@@ -53,7 +53,6 @@ def adhoc_ranking_algorithm(mov_list, user):
 		score += 400* pow( len(user.get_friends_who_like(mov)), 3.0 )
 		
 		res[mid] = score
-	print res
 	return sorted(res, key=lambda z : -res[z])
 
 	
