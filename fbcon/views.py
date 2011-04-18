@@ -13,6 +13,7 @@ from fbcon.models import *
 from cgi import parse_qs
 from django.http import *
 from random import shuffle
+from math import *
 
 FACEBOOK_API_KEY=settings.FACEBOOK_API_KEY    		# change to your facebook api key
 FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app secret key
@@ -43,9 +44,13 @@ def adhoc_ranking_algorithm(mov_list, user):
 		if age:
 			"""
 		
-		score = genre_count*genre_count*genre_count*300
-		score += 2*mov.rating_percent()
-		score += 0.005*mov.rating_percent()*(1 + mov.votes)
+		score = 300* pow(genre_count, 4.0)
+		score += 2 * pow(mov.rating_percent()/10., 1.5)
+		score += 0.005 * mov.rating_percent() * (1 + mov.votes)
+		
+		#social factor
+		score += 400* pow( len(user.get_friends_who_like(mov)), 3.0 )
+		
 		res[mid] = score
 	print res
 	return sorted(res, key=lambda z : -res[z])
