@@ -372,10 +372,6 @@ class User(models.Model):
 			if r.last_fetched < datetime.now() - timedelta(days=1):
 				cached = False
 			else:
-<<<<<<< HEAD
-=======
-				#print "returning cached user"
->>>>>>> 3df1ab64b1cb9ff776e6e7cadddd135cb6898b6d
 				return r
 		r = User.fetch(id, access_token)
 		r.save()
