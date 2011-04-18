@@ -38,7 +38,7 @@
          });
 		FB.getLoginStatus(function(response) {
 		  if (response.session) {
-			console.log("logged in getLoginStatus");
+			console.log("Logged in getLoginStatus");
 		  } else {
 			
 		  }
@@ -49,11 +49,11 @@
 		<h3>A social movie recommendation system</h3>
 	</div>
 	<div class="container">
-	<div id="flash_notice"> </div>
 	{% block body %} {% endblock %}
 	</div>
+	<br>
 	<div class="header container">
-		<h3>About Us | Terms | Help</h3>
+		<h3 align="right">About Us | Terms | Help</h3>
 	</div>
 </body>
 

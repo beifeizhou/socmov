@@ -407,7 +407,7 @@ class User(models.Model):
 		v.save()
 	
 	""" get_friends_like function is used to find all the friends which like the given Movie mov """	
-	def get_friends_like(self, mov):
+	def get_friends_who_like(self, mov):
 		fr = self.get_friends()
 		ids = []
 		for f in fr:

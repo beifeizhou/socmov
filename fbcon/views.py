@@ -12,6 +12,7 @@ import settings
 from fbcon.models import *
 from cgi import parse_qs
 from django.http import *
+from random import shuffle
 
 FACEBOOK_API_KEY=settings.FACEBOOK_API_KEY    		# change to your facebook api key
 FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app secret key
@@ -19,16 +20,19 @@ FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app 
 """
 Converts a list of movie MIDs, into a n*3 2D array
 """ 
-def transform_to_grid(res):
+def transform_to_grid(res, user=None):
+	shuffle(res)
 	movies = []
 	for i in xrange(0, len(res), 3):
 		row = res[i : min([i+3, len(res)]) ]
 		tmp = []
 		count = 0
 		for mid in row:
-			dic = Movie.getMovieInfo(mid).get_render_compact_dict()
+			mov = Movie.getMovieInfo(mid)
+			dic = mov.get_render_compact_dict()
 			count += 1
 			dic['column'] = count
+			dic['friends'] = user.get_friends_who_like( mov ) if user else None
 			tmp.append( dic )
 		movies.append( tmp )
 	return movies
@@ -55,13 +59,14 @@ def get_fb_details(cookies):
 
 
 def index(request):
+	profile, friends, likes = get_fb_details(request.COOKIES)
+	
 	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, genre=[]) 
 	res = []
 	for mov in search_res:
 		res.append( mov.get("id") )
-	movies = transform_to_grid(res)
+	movies = transform_to_grid(res, user=profile)
 	
-	profile, friends, likes = get_fb_details(request.COOKIES)
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	
 def profile_user(request):
@@ -70,7 +75,7 @@ def profile_user(request):
 	res = []
 	for mov in search_res:
 		res.append(mov.mid)
-	movies = transform_to_grid(res)
+	movies = transform_to_grid(res, user=profile)
 	return render_to_response('user.html', {'movies' : movies, "user" : profile})
 
 def login(request):

@@ -1,14 +1,19 @@
-<div class="vote_box">
-	<span>
+<div class="vote_box span-5 last">
+	<span class="span-2">
 		<a href="#" class="vote_ui vote_up" movieid="{{ movieid }}">   
 			<img width="16px" height="16px" src="/media/images/vote/vote_up.png">   
 			Like
 		</a>
 	</span>
-	<span>
+	<span class="span-3 last">
 		<a href="#" class="vote_ui vote_down" movieid="{{ movieid }}"> 
 			<img width="16px" height="16px" src="/media/images/vote/vote_down.png"> 
 			Dislike
 		</a>
 	</span>
 </div>
+{% if friends %}
+	<div class="friend_like_box span-5 last">
+	{{ friends|length }} of your friends like this
+	</div>
+{% endif %}

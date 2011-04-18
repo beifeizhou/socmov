@@ -10,14 +10,17 @@
 			<h3> {{ mov.name }} </h3>
 		</a>
 		<h4> {{ mov.tagline }} </h4>
-		<div class="classification">
-			<div class="cover"></div>
-			<div class="progress" style="width: {{ mov.rating_percent }}%;"></div>
+		<div class="span-5 last">
+			<div class="classification span-4">
+				<div class="cover"></div>
+				<div class="progress" style="width: {{ mov.rating_percent }}%;"></div>
+			</div>
+			<div class="rating span-1 last">{{ mov.rating }}</div> 
+			{# from {{ mov.votes }} on <a href="http://tmdb.org">TMDB</a> #}
+			{# <p> {{mov.overview}}</p> #}
 		</div>
-		<span class="rating">{{ mov.rating }}</span> from {{ mov.votes }} on <a href="http://tmdb.org">TMDB</a>
-		{# <p> {{mov.overview}}</p> #}
-		{% include "vote.html" with movieid=mov.mid %} 		
-	</div>	
+		{% include "vote.html" with movieid=mov.mid friends=mov.friends%}
+	</div>
 {% else %}
 	No movie mentioned
 {% endif %}
