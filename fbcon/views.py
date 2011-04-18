@@ -16,6 +16,27 @@ from django.http import *
 FACEBOOK_API_KEY=settings.FACEBOOK_API_KEY    		# change to your facebook api key
 FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app secret key
 
+"""
+Converts a list of movie MIDs, into a n*3 2D array
+""" 
+def transform_to_grid(res):
+	movies = []
+	for i in xrange(0, len(res), 3):
+		row = res[i : min([i+3, len(res)]) ]
+		tmp = []
+		count = 0
+		for mid in row:
+			dic = Movie.getMovieInfo(mid).get_render_compact_dict()
+			count += 1
+			dic['column'] = count
+			tmp.append( dic )
+		movies.append( tmp )
+	return movies
+
+"""Takes the cookies and parses user details from it to return
+- profile
+- friend list
+- movie likes""" 
 def get_fb_details(cookies):
 	cookie = facebook.get_user_from_cookie(	cookies,
 											FACEBOOK_API_KEY,
@@ -33,36 +54,22 @@ def get_fb_details(cookies):
 	return profile, friends, likes
 
 def index(request):
-	res = Movie.browse(order_by="rating", order="desc", top_x=12, genre=[]) 
-	movies = []
-	profile, friends, likes = get_fb_details(request.COOKIES)
-	mod3 = 0
-	for mov in res:
-		mid = mov.get("id")
-		mod3 += 1
-		dic = Movie.getMovieInfo(mid).get_render_compact_dict()
-		dic['last'] = mod3
-		if mod3 == 3:
-			mod3 = 0
-		movies.append( dic )
+	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, genre=[]) 
+	res = []
+	for mov in search_res:
+		res.append( mov.get("id") )
+	movies = transform_to_grid(res)
 	
+	profile, friends, likes = get_fb_details(request.COOKIES)
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	
 def profile_user(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
-	res = profile.get_movie_likes()
-	movies = []
-	mod3 = 0
-	
-	for mov in res:
-		mid = mov.mid
-		mod3 += 1
-		dic = Movie.getMovieInfo(mid).get_render_compact_dict()
-		dic['last'] = mod3
-		if mod3 == 3:
-			mod3 = 0
-		movies.append( dic )
-	
+	search_res = profile.get_movie_likes()
+	res = []
+	for mov in search_res:
+		res.append(mov.mid)
+	movies = transform_to_grid(res)
 	return render_to_response('userprofile.html', {'movies' : movies, "user" : profile})
 
 def login(request):
