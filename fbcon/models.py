@@ -401,8 +401,7 @@ class User(models.Model):
 		r = User.fetch(id, access_token)
 		r.save()
 		
-		
-		m = []#json.loads(r.movies)
+		m = json.loads(r.movies)
 		for i in m:
 			try:
 				M = Movie.search(i["name"])[0]
@@ -453,7 +452,10 @@ class User(models.Model):
 				j = j + 1
 			i = j
 		return r
-
+	def get_age(self):
+		if self.birthday == None:
+			return None
+		return (date.today() - self.birthday).days / 365.0
 
 class Vote(models.Model):
 	movie = models.ForeignKey(Movie)

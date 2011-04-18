@@ -25,26 +25,37 @@ def adhoc_ranking_algorithm(mov_list, user):
 		mov = Movie.getMovieInfo(mid)
 		movies.append( mov )
 		#calc score
-		score = 0
+		genre_count = 0
+		genres = mov.get_genres()
 		if user.relationship_status:
 			if user.relationship_status != 'Single':
-				if "Romance" in mov.get_genres():
-					score += 1
-				if "Drama" in mov.get_genres():
-					score += 1
-			else:
-				pass
-			#if user.gender == 
-			
+				genre_count += len( set(["Drama", "Romance"]) & set(genres) )
+			if user.relationship_status == 'Married':
+				genre_count += len( set(["Family"]) & set(genres) )
+		
+		if user.gender:
+			if user.gender == 'male':
+				genre_count += len( set(['Action', 'Action & Adventure', 'Adventure']) & set(genres) ) 
+			if user.gender == 'female':
+				genre_count += len( set(['Fantasy']) & set(genres) )
+		"""
+		age = user.get_age()
+		if age:
+			"""
+		
+		score = genre_count*genre_count*genre_count*300
+		score += 2*mov.rating_percent()
+		score += 0.005*mov.rating_percent()*(1 + mov.votes)
 		res[mid] = score
-	
-	
+	print res
+	return sorted(res, key=lambda z : -res[z])
+
 	
 """
 Converts a list of movie MIDs, into a n*3 2D array
 """ 
 def transform_to_grid(res, user=None):
-	shuffle(res)
+	#shuffle(res)
 	movies = []
 	for i in xrange(0, len(res), 3):
 		row = res[i : min([i+3, len(res)]) ]
@@ -84,15 +95,13 @@ def get_fb_details(cookies):
 def index(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
 	
-	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, genre=[]) 
+	search_res = Movie.browse(order_by="rating", order="desc", top_x=100, genre=[]) 
 	res = []
 	for mov in search_res:
 		res.append( mov.get("id") )
-	
+	res = adhoc_ranking_algorithm(res, profile)
+	res = res[0:30]
 	movies = transform_to_grid(res, user=profile)
-	
-	
-	
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	
 def profile_user(request):
