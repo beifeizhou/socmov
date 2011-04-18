@@ -50,11 +50,15 @@ mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS socmovdb;"
 #cd libsvm-3.1
 #make
 
-#sudo apt-get install libsvm-tools
-#sudo apt-get install libsvm-dev
-#sudo apt-get install python-libsvm
+
 #Apache stuff
 sudo apt-get install sed
 sudo apt-get install apache2.2-common apache2
 #sudo apt-get install nginx
 sudo apt-get install libapache2-mod-wsgi
+
+sudo apt-get install g++
+#sudo apt-get install libsvm-tools
+#sudo apt-get install libsvm-dev
+#sudo apt-get install python-libsvm
+g++ svm/svm.cpp

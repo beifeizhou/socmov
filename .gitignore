@@ -6,3 +6,4 @@ install/*
 apache/*
 logs/*
 priv_key/*
+svm/svm

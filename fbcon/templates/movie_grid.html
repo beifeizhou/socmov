@@ -1,9 +1,9 @@
 {% for row in movies %}
 <div class="span-24 last" style="margin-bottom:30px">
-{% for m in row %}
-	<div class="span-8{% if m.column == 3 %} last{% endif %}">
-	{% include "movie_compact.html" with mov=m.mov poster=m.poster %}
-	</div>
+	{% for m in row %}
+		<div class="span-8{% if m.column == 3 %} last{% endif %}">
+		{% include "movie_compact.html" with mov=m.mov poster=m.poster %}
+		</div>
 	{% endfor %}
 </div>
 {% endfor %}
