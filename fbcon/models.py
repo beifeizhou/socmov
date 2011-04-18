@@ -92,6 +92,7 @@ class Movie(models.Model):
 	genres = models.TextField(null = True)
 	
 	def parse(current):
+		#current = json.loads(current)
 		ret = MovieResult()
 		keys = current.keys()
 		for i in range(0, len(keys)):
@@ -196,21 +197,22 @@ class Movie(models.Model):
 		except Exception, e:
 			logging.exception(e)
 			return None
-		#except Exception as detail:
-			#print detail
-			#return None
 	getMovieInfo = staticmethod(getMovieInfo)
 		
 	""" search is used to find a list of movies that match your given 'tag'. It is particularly useful to 
-		get the id of a particular movie. tag is a string"""
+		get the id of a particular movie. tag is a string """
 	def search(tag):
 		search_results = SearchResults()
 		tag = tag.replace(" ", "+")
 		try:
 			url = config['urls']['movie.search'] % (tag)
 			resp = _parse_json( urllib2.urlopen(url).read() )
+			temp = json.dumps(resp)
+			if temp == "[\"Nothing found.\"]":
+				#print "returning empty list"
+				return SearchResults()
+				
 			for i in range(0, len(resp)):
-				print resp[i]
 				cur_result = Movie.parse(resp[i])
 				search_results.append(cur_result)
 			return search_results
@@ -370,7 +372,7 @@ class User(models.Model):
 			if r.last_fetched < datetime.now() - timedelta(days=1):
 				cached = False
 			else:
-				print "returning cached user"
+				#print "returning cached user"
 				return r
 		r = User.fetch(id, access_token)
 		r.save()
