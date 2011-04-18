@@ -2,33 +2,43 @@
 {% extends "base.html" %}
 {% block body %}
 {% if mov %}
-	<h1> {{ mov.name }} </h1>
-	<h3> {{ mov.tagline }} </h3>
-	{{ mov.rating }} from {{ mov.votes }} 
-	
-	{% include "vote.html" with movieid=mov.mid friends=mov.friends%}
-	
-	<p> {{mov.overview}}</p>
+<div class="span-24 last">
+	<div class="span-6">
 	<h3> Covers </h3>
-	{% for v in posters %}
-		{% if forloop.first %}
-			<a href = "{{ v.url }}" rel = "covers" > <img src="{{ v.url }}" width = "200" height "300"/> </a>
-		{% else %}
-			<a href = "{{ v.url }}" rel = "covers"> </a>
-		{% endif %}
-	{% endfor %}
-	<br>
-	<h3> Backdrops </h3>
-	{% for v in backdrops %}
-		{% if forloop.first %}
-			<a href = "{{ v.url }}" rel = "backdrops" > <img src="/media/backdrops.png" /> </a>
-		{% else %}
-			<a href = "{{ v.url }}" rel = "backdrops"> </a>
-		{% endif %}
-	{% endfor %}
+		{% for v in posters %}
+			{% if forloop.first %}
+				<a href = "{{ v.url }}" rel = "covers" > <img src="{{ v.url }}" width = "200" height "300"/> </a>
+			{% else %}
+				<a href = "{{ v.url }}" rel = "covers"> </a>
+			{% endif %}
+		{% endfor %}
+		<br>
+		<h3> Backdrops </h3>
+		{% for v in backdrops %}
+			{% if forloop.first %}
+				<a href = "{{ v.url }}" rel = "backdrops" > <img src="/media/backdrops.png" /> </a>
+			{% else %}
+				<a href = "{{ v.url }}" rel = "backdrops"> </a>
+			{% endif %}
+		{% endfor %}	
+		<br>
+	</div>
 	
-	<br>
-	{% if trailer %}
+	
+	<div class="span-18 last">
+		<div class="span-18 last">
+			<h1> {{ mov.name }} </h1>
+			<h2> {{ mov.tagline }} </h2>
+			
+			<h3>{{ mov.rating }} from {{ mov.votes }} </h3>
+			<h3> {{mov.overview}}</h3>
+			
+			{% include "vote.html" with movieid=mov.mid friends=mov.friends %}
+			<br>
+			<br>
+			<br>
+		</div>
+		{% if trailer %}
 		<h3>Youtube trailer</h3>
 		<iframe class="youtube-player" 
 				type="text/html" 
@@ -38,7 +48,9 @@
 				frameborder="0">
 		</iframe>
 	{% endif %}
+	</div>
+</div>
 {% else %}
-	No movie mentioned
+	No movie !
 {% endif %}
 {% endblock %}
