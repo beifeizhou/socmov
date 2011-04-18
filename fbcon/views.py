@@ -20,6 +20,8 @@ FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app 
 
 
 def adhoc_ranking_algorithm(mov_list, user):
+	if not user:
+		return mov_list
 	movies = []
 	res = {}
 	for mid in mov_list:
@@ -39,11 +41,7 @@ def adhoc_ranking_algorithm(mov_list, user):
 				genre_count += len( set(['Action', 'Action & Adventure', 'Adventure']) & set(genres) ) 
 			if user.gender == 'female':
 				genre_count += len( set(['Fantasy']) & set(genres) )
-		"""
-		age = user.get_age()
-		if age:
-			"""
-		
+
 		score = 300* pow(genre_count, 4.0)
 		score += 2 * pow(mov.rating_percent()/10., 1.5)
 		score += 100 * pow(mov.votes, 1.2)
@@ -54,7 +52,6 @@ def adhoc_ranking_algorithm(mov_list, user):
 		
 		res[mid] = score
 	return sorted(res, key=lambda z : -res[z])
-
 	
 """
 Converts a list of movie MIDs, into a n*3 2D array
