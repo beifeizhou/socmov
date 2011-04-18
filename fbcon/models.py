@@ -219,7 +219,7 @@ class Movie(models.Model):
 	search = staticmethod(search)
 	
 	def rating_percent(self):
-		return int(self.rating*10)
+		return int(int(self.rating)*10)
 		
 	""" browse method is used to fetch top_x number of movies, based on the following parameters:
 		order_by: 	["rating", "release", "title"]
