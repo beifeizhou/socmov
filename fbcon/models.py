@@ -281,6 +281,12 @@ class Movie(models.Model):
 				break
 		return {"mov"		: self,
 				"poster"	: poster}
+	
+	def get_genres(self):
+		ret = []
+		for i in json.loads(self.genres):
+			ret.append(i['name'])
+		return ret
 
 class User(models.Model):
 	username = models.CharField(max_length=128, null=True)
@@ -289,13 +295,20 @@ class User(models.Model):
 	gender = models.CharField(max_length=16, null=True)
 	uid = models.CharField(max_length=128, primary_key=True)
 	hometown = models.CharField(max_length=2048, null=True)
+	hometown = models.CharField(max_length=2048, null=True)
+	
 	languages = models.CharField(max_length=2048, null=True)
 	link = models.CharField(max_length=128)
 	interested_in = models.CharField(max_length=1024, null=True)
 	relationship_status = models.CharField(max_length=1024, null=True)
 	religion = models.CharField(max_length=1024, null=True)
 	photo_url = models.CharField(max_length=1024)
-
+	
+	birthday = models.DateField(null=True)
+	education = models.TextField(null=True)
+	political = models.TextField(null=True)
+	work = models.TextField(null=True)
+	
 	#json encoded strings
 	friends = models.TextField()
 	movies = models.TextField()
@@ -319,6 +332,13 @@ class User(models.Model):
 		friends = _parse_json(resp[1]['body'])['data']
 		likes = _parse_json(resp[2]['body'])['data']
 		
+		birthday = None
+		if profile.get('birthday'):
+			mm, dd, yy = profile.get('birthday').split('/')
+			mm, dd, yy = int(mm), int(dd), int(yy)
+			birthday = date(yy, mm, dd)
+		print birthday, " hello ", profile.get('birthday')
+		print "hoo hoo haa haa"
 		x = User( 	username = profile.get('username'),
 					first_name = profile.get('first_name'),
 					last_name = profile.get('last_name'),
@@ -331,9 +351,14 @@ class User(models.Model):
 					relationship_status = profile.get('relationship_state'),
 					religion = profile.get('religion'),
 					photo_url = 'http://todo.com',
+					birthday = birthday,
+					education = profile.get('education'),
+					political = profile.get('political'),
+					work = profile.get('work'),
 					friends = json.dumps(friends),
 					movies = json.dumps(likes),
 					last_fetched = datetime.now(),
+					
 				 )
 		return x
 	fetch = staticmethod(fetch)
@@ -377,7 +402,7 @@ class User(models.Model):
 		r.save()
 		
 		
-		m = json.loads(r.movies)
+		m = []#json.loads(r.movies)
 		for i in m:
 			try:
 				M = Movie.search(i["name"])[0]

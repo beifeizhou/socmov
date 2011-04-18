@@ -17,6 +17,29 @@ from random import shuffle
 FACEBOOK_API_KEY=settings.FACEBOOK_API_KEY    		# change to your facebook api key
 FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app secret key
 
+
+def adhoc_ranking_algorithm(mov_list, user):
+	movies = []
+	res = {}
+	for mid in mov_list:
+		mov = Movie.getMovieInfo(mid)
+		movies.append( mov )
+		#calc score
+		score = 0
+		if user.relationship_status:
+			if user.relationship_status != 'Single':
+				if "Romance" in mov.get_genres():
+					score += 1
+				if "Drama" in mov.get_genres():
+					score += 1
+			else:
+				pass
+			#if user.gender == 
+			
+		res[mid] = score
+	
+	
+	
 """
 Converts a list of movie MIDs, into a n*3 2D array
 """ 
@@ -65,7 +88,10 @@ def index(request):
 	res = []
 	for mov in search_res:
 		res.append( mov.get("id") )
+	
 	movies = transform_to_grid(res, user=profile)
+	
+	
 	
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	

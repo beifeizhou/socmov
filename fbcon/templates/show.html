@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %} Your information {% endblock %}
 {% block body %}
+{{ user }}
 Welcome {{ user.first_name }} <br>
 <h1> My friends </h1>
 {% for pair in friends %}
