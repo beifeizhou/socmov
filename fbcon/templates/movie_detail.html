@@ -1,5 +1,6 @@
 {# renders a movie and takes mov - movie parameter #}
 {% extends "base.html" %}
+{% block title %} {{ mov.name }} {% endblock %}
 {% block body %}
 {% if mov %}
 <div class="span-24 last">

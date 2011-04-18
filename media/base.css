@@ -18,7 +18,9 @@ body {
 	font-size:1.8em;
 	color: #004483;
 }
-
+p {
+	font-size: 1.4em;
+}
 .vote_box {
 	margin-top: 7px;
 }
