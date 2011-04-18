@@ -17,3 +17,21 @@ body {
 .rating {
 	font-size:15px;
 }
+
+.vote_box {
+	margin-top: 7px;
+}
+.vote_ui {
+	text-decoration: none; 
+	font-size: 1.2em;
+}
+.vote_up, .vote_up:hover {
+	color: #007500;
+}
+.vote_down, .vote_down:hover {
+	color: #bf0000;
+}
+.vote_up:hover, .vote_down:hover {
+	font-weight: 900;
+}
+

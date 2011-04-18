@@ -1,3 +1,6 @@
+function show_flash_msg(txt) {
+	$('#flash_notice').text( txt );
+}
 $(document).ready(function(){
 	$("a[rel='backdrops']").colorbox({transition:"fade", width : "60%" , height:"60%"});
 	$("a[rel='covers']").colorbox({slideshow:true });
@@ -15,11 +18,13 @@ $(document).ready(function(){
 				   },
 		}).success(
 			function(data) {
-				console.log("successfully voted " + (type ? "up" : "down") );
+				show_flash_msg("Successfully voted " + (type ? "up" : "down"));
+				console.log("Successfully voted " + (type ? "up" : "down") );
 			}
 		).error(
 			function (data) {
-				console.log("something went wrong");
+				show_flash_msg("Something went wrong");
+				console.log("Something went wrong");
 				console.log(data);
 			}
 		);
