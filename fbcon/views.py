@@ -111,7 +111,7 @@ def index(request):
 	for mov in search_res:
 		res.append( mov.get("id") )
 	res = adhoc_ranking_algorithm(res, profile)
-	res = res[0:30]
+	res = res[0:45]
 	movies = transform_to_grid(res, user=profile)
 	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	

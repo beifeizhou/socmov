@@ -10,7 +10,7 @@ $(document).ready(function(){
 		var type = elem.hasClass('vote_up');
 		
 		$.ajax({
-			url : "vote",
+			url : "/vote",
 			data : { 'movieid' 	: movieid,
 					 'type'		: type,
 				   },

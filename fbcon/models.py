@@ -344,8 +344,6 @@ class User(models.Model):
 			mm, dd, yy = profile.get('birthday').split('/')
 			mm, dd, yy = int(mm), int(dd), int(yy)
 			birthday = date(yy, mm, dd)
-		print birthday, " hello ", profile.get('birthday')
-		print "hoo hoo haa haa"
 		x = User( 	username = profile.get('username'),
 					first_name = profile.get('first_name'),
 					last_name = profile.get('last_name'),
