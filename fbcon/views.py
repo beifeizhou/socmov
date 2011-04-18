@@ -72,6 +72,12 @@ def transform_to_grid(res, user=None):
 			count += 1
 			dic['column'] = count
 			dic['friends'] = user.get_friends_who_like( mov ) if user else None
+			"""if user:
+				print "Transform to grid : ", len(dic['friends'])
+				for u in dic['friends']:
+					if u != None:
+						print u.first_name, u.last_name
+			"""
 			tmp.append( dic )
 		movies.append( tmp )
 	return movies
@@ -99,9 +105,9 @@ def get_fb_details(cookies):
 
 def index(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
-	
-	search_res = Movie.browse(order_by="rating", order="desc", top_x=100, genre=[]) 
+	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, min_votes = 20, genre=[]) 
 	res = []
+	
 	for mov in search_res:
 		res.append( mov.get("id") )
 	res = adhoc_ranking_algorithm(res, profile)

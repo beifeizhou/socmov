@@ -17,7 +17,7 @@ config['urls']['movie.search'] = "http://api.themoviedb.org/2.1/Movie.search/en/
 config['urls']['movie.getInfo'] = "http://api.themoviedb.org/2.1/Movie.getInfo/en/json/%(apikey)s/%%s" % (config)
 config['urls']['media.getInfo'] = "http://api.themoviedb.org/2.1/Media.getInfo/en/json/%(apikey)s/%%s/%%s" % (config)
 config['urls']['imdb.lookUp'] = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/json/%(apikey)s/%%s" % (config)
-config['urls']['movie.browse'] = "http://api.themoviedb.org/2.1/Movie.browse/en/json/%(apikey)s?order_by=%%s&order=%%s&page=1&per_page=%%s&min_votes=100" % (config)
+config['urls']['movie.browse'] = "http://api.themoviedb.org/2.1/Movie.browse/en/json/%(apikey)s?order_by=%%s&order=%%s&page=1&per_page=%%s&min_votes=%%s" % (config)
 config['urls']['genre.getList'] = "http://api.themoviedb.org/2.1/Genres.getList/en/json/%(apikey)s" % (config)
 offest = 2629743 * 3 #1 month = 2629743 seconds
 genre_dict = {}
@@ -60,7 +60,7 @@ class Movie(models.Model):
 	version = models.IntegerField(null = True)
 	revenue = models.BigIntegerField(null = True)
 	budget = models.BigIntegerField(null = True)
-	rating = models.DecimalField(max_digits = 2, decimal_places = 1, null = True)
+	rating = models.DecimalField(max_digits = 4, decimal_places = 2, null = True)
 	translated = models.BooleanField()
 	adult = models.BooleanField()
 	imdb_id = models.CharField(max_length = 15, null = True)
@@ -162,8 +162,8 @@ class Movie(models.Model):
 								adult = m['adult'],
 								language = m['language'],
 								name = m['name'],
-								original_name = m['original_name'],
-								alternative_name = m['alternative_name'],
+								original_name = "", #m['original_name'],
+								alternative_name = "", #m['alternative_name'],
 								movie_type = m['movie_type'],
 								status = m['status'],
 								url = m['url'],
@@ -229,10 +229,10 @@ class Movie(models.Model):
 		order: 		["asc", "desc"]
 		top_x:		an integer (number of movies to be fetched)
 		genre:		an array containing all the genres to which the movies should belong to """
-	def browse(order_by, order, top_x, genre):
+	def browse(order_by, order, top_x, min_votes, genre):
 		search_results = SearchResults()
 		try:
-			url = config['urls']['movie.browse'] % (order_by, order, top_x)
+			url = config['urls']['movie.browse'] % (order_by, order, top_x, min_votes)
 	
 			if len(genre) > 0:
 				G = Genre.objects.get(name = genre[0])
@@ -252,6 +252,13 @@ class Movie(models.Model):
 			logging.exception(e)
 			return SearchResults()
 	browse = staticmethod(browse)
+	
+	def get_genre(self):
+		ret = []
+		for i in json.loads(self.genres):
+			ret.append(i['name'])
+		return ret
+		
 	
 	def get_trailer_embed(self):
 		if self.trailer:
@@ -378,10 +385,10 @@ class User(models.Model):
 		m = json.loads(r.movies)
 		for i in m:
 			try:
-				M = Movie.search(i["name"])[0]
+				M = Movie.search(i["name"])
 				if len(M) < 1:
 					continue
-				u.add_movie( Movie.getMovieInfo(M['id']), 1 )
+				u.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
 			except Exception, e:
 				logging.exception(e)
 		return u
@@ -404,10 +411,10 @@ class User(models.Model):
 		m = json.loads(r.movies)
 		for i in m:
 			try:
-				M = Movie.search(i["name"])[0]
+				M = Movie.search(i["name"])
 				if len(M) < 1:
 					continue
-				r.add_movie( Movie.getMovieInfo(M['id']), 1 )
+				r.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
 			except Exception, e:
 				logging.exception(e)
 		return r
