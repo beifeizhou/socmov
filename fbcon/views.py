@@ -82,7 +82,6 @@ def transform_to_grid(res, user=None):
 			count += 1
 			dic['column'] = count
 			dic['friends'] = user.get_friends_who_like( mov ) if user else None
-			print dic['friends']
 			"""if user:
 				print "Transform to grid : ", len(dic['friends'])
 				for u in dic['friends']:
@@ -133,7 +132,7 @@ def profile_user(request):
 	for mov in search_res:
 		res.append(mov.mid)
 	movies = transform_to_grid(res, user=profile)
-	return render_to_response('user.html', {'movies' : movies, "user" : profile})
+	return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	
 def search_movies(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
@@ -145,7 +144,7 @@ def search_movies(request):
 		for mov in search_res:
 			res.append( mov.get("id") )
 		movies = transform_to_grid(res)
-		return render_to_response('search.html', {'movies' : movies, "user" : profile})
+		return render_to_response('index.html', {'movies' : movies, "user" : profile})
 	
 
 def login(request):

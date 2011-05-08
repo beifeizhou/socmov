@@ -27,9 +27,9 @@ $(document).ready(function(){
 		).error(
 			function (xhr, ajaxOptions, thrownError) {
 				console.log("Something went wrong");
-				console.log(xhr);
-				console.log(ajaxOptions);
-				console.log(thrownError);
+				if (xhr.status == 403) {
+					console.log("user not logged in :-/");
+				}
 			}
 		);
 		return false;
@@ -41,5 +41,11 @@ $(document).ready(function(){
 			console.log( data );
 		}
 	);
+	
+	$('#invFriends').click(function(){
+	FB.ui({	method	: 'apprequests', 
+			message	: 'Discover movies. Socially.', 
+			data	: 'tracking information for the user'});
+	});
 });
 
