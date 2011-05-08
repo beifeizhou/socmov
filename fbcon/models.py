@@ -321,7 +321,20 @@ class User(models.Model):
 	movies = models.TextField()
 	
 	last_fetched = models.DateTimeField()
+	last_updated_movies = models.DateTimeField()
 	movie = models.ManyToManyField(Movie, through = "Vote")
+	
+	def update_movies(self):
+		self.last_updated_movies = datetime.now()
+		m = json.loads(self.movies)
+		for i in m:
+			try:
+				M = Movie.search(i["name"])
+				if len(M) < 1:
+					continue
+				self.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
+			except Exception, e:
+				logging.exception(e)
 	
 	def fetch(id, access_token):
 		id = str(id)
@@ -363,7 +376,7 @@ class User(models.Model):
 					friends = json.dumps(friends),
 					movies = json.dumps(likes),
 					last_fetched = datetime.now(),
-					
+					last_updated_movies = datetime.now() - timedelta(days = 1000)
 				 )
 		return x
 	fetch = staticmethod(fetch)
@@ -380,15 +393,10 @@ class User(models.Model):
 		u = User.fetch_current(access_token)
 		u.save()
 		
-		m = json.loads(r.movies)
-		for i in m:
-			try:
-				M = Movie.search(i["name"])
-				if len(M) < 1:
-					continue
-				u.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
-			except Exception, e:
-				logging.exception(e)
+		#fetch user's FB movie likes, if not cached
+		if u.last_updated_movies < datetime.now() - timedelta(days = 30):
+			u.update_movies()
+			
 		return u
 	get_current = staticmethod(get_current)
 	
@@ -406,15 +414,10 @@ class User(models.Model):
 		r = User.fetch(id, access_token)
 		r.save()
 		
-		m = json.loads(r.movies)
-		for i in m:
-			try:
-				M = Movie.search(i["name"])
-				if len(M) < 1:
-					continue
-				r.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
-			except Exception, e:
-				logging.exception(e)
+		#fetch user's FB movie likes, if not cached
+		if r.last_updated_movies < datetime.now() - timedelta(days = 30):
+			r.update_movies()
+		
 		return r
 	get_by_id = staticmethod(get_by_id)
 
