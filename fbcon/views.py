@@ -22,6 +22,22 @@ FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app 
 def adhoc_ranking_algorithm(mov_list, user):
 	if not user:
 		return mov_list
+	
+	try:
+		f = user.get_movies_liked_by_friends()
+		Z = Vote.objects.raw('SELECT * FROM fbcon_vote WHERE user_id = %s', [user.uid])
+		
+		ids = []
+		z = []
+		for i in Z:
+			z.append(i.movie_id)
+		for i in f:
+			ids.append(i.mid)
+		mov_list = list( (set(mov_list) | set(ids)) - set(z) )
+		
+	except Exception, e:
+			logging.exception(e)
+	
 	movies = []
 	res = {}
 	for mid in mov_list:
