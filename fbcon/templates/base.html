@@ -45,20 +45,50 @@
 		});
     </script>	
 	<div class="header container">
-		<h1><img src="/media/images/logo.png" width="48px" height="48px" style="margin-top:10px"> Social Movies</h1>
+		<h1>
+			<a href="/"><img src="/media/images/logo.png" width="48px" height="48px" style="margin-top:10px"> Social Movies</a>
+		</h1>
 		<h3>Discover movies. Socially.</h3>
 	</div>
 	<div class="container">
-	<div align = "right">
-		<form action = "/search" method = "get">
-			<input type = "text" name = "query" />
-			<input type = "submit" value = "Search" />
-		</form>
-	</div>
-	<div id="flash_notice"> </div>
 	
-	{% block body %} {% endblock %}
+	<div class="span-24 last topbar">
+		<div class="span-16">
+			<p>
+				<a href="/">Home</a> 
+				| 
+				<a href="/user">Profile</a>
+			</p>			
+		</div>
+		<div class="span-8 last">
+			<form class="searchBar" action = "/search" method = "get">
+				<input class="queryBox" type = "text" name = "query" />
+				<input class="submitBox" type = "submit" value = "Search" />
+			</form>
+		</div>
+		
+		
+		<div class="span-24 last topbarLine2">
+			<p>
+			{% if user %}
+				<span>Welcome, <a href = "/user">{{ user.first_name }}</a></span>
+				| 
+				<a href="#invite_friends" id="invFriends"> <img src="/media/images/invite.png"> Invite your friends</a>
+			{% else %}
+				{% include "fblogin.html" %}
+			{% endif %}
+			
+			</p> 
+		</div>
+		<hr> <br>
+		
 	</div>
+		
+		{% block body %} {% endblock %}
+		
+	</div>
+	
+	
 	<br>
 	<div class="header container">
 		<h3 align="right">About Us | Terms | Help</h3>

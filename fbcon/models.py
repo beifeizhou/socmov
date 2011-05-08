@@ -324,11 +324,12 @@ class User(models.Model):
 	last_updated_movies = models.DateTimeField()
 	movie = models.ManyToManyField(Movie, through = "Vote")
 	
+	"""Returns a boolean signifying if an actual fetch/update takes place""" 
 	def update_movies(self):
 		if self.last_updated_movies < datetime.now() - timedelta(days = 30):
 			self.last_updated_movies = datetime.now() #update timestamp
+			self.save()
 			m = json.loads(self.movies)
-			
 			for i in m:
 				try:
 					M = Movie.search(i["name"])
@@ -337,7 +338,9 @@ class User(models.Model):
 					self.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
 				except Exception, e:
 					logging.exception(e)
-	
+			return True
+		return False
+
 	def fetch(id, access_token):
 		id = str(id)
 		batchstr  = [{"method":"get","relative_url":id,"access_token":access_token},

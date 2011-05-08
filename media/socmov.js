@@ -20,6 +20,9 @@ $(document).ready(function(){
 				parent.children().remove();
 				parent.text("Thanks, you're vote has been sent");
 				console.log("Successfully voted " + (type ? "up" : "down") );
+				
+				var block = parent.parent().parent();
+				block.addClass('greyBox');
 			}
 		).error(
 			function (data) {

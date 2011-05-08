@@ -19,7 +19,7 @@
 			{# from {{ mov.votes }} on <a href="http://tmdb.org">TMDB</a> #}
 			{# <p> {{mov.overview}}</p> #}
 		</div>
-		{% include "vote.html" with movieid=mov.mid friends=mov.friends%}
+		{% include "vote.html" with movieid=mov.mid friends=mov.friends %}
 	</div>
 {% else %}
 	No movie mentioned

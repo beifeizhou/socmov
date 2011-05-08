@@ -2,13 +2,7 @@
 {% block title %} SocMov {% endblock %}
 {% block body %} 
 
-{% if user %}
-	<p>Welcome, <a href = "/user">{{ user.first_name }}</a></p>
-{% else %}
-	{% include "fblogin.html" %}
-{% endif %}
 
-<h3><a href="#invite_friends" id="invFriends"> Invite your friends</a></h3>
 
 <script type="text/javascript">
 $('#invFriends').click(function(){

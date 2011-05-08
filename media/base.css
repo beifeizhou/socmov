@@ -11,15 +11,48 @@ body {
 	border-left: 20px black solid;
 	border-right: 20px black solid;
 }
-.header h3, .header h1 {
-	color: white;
+.header h3, .header h1, .header a {
+	color: white; text-decoration: none;
 }
+
+.searchBar {
+	display: inline;
+	text-align: right;
+}
+
 .rating {
 	font-size:1.8em;
 	color: #004483;
 }
+a {
+	text-decoration: none;
+}
 p {
 	font-size: 1.4em;
+	margin: 0;
+}
+.topbar {
+	margin-top: 1.0em;
+	margin-bottom: 0.75em;
+}
+.topbar p {
+	color: #DDD;
+}
+.topbar p span {
+	color: black;
+}
+.topbarLine2 {
+	margin-bottom: 0.3em;
+}
+.welcomeText {
+	margin-bottom: 0.5em;
+}
+input.queryBox {
+	font-size: 14pt; margin: 0;
+}
+.greyBox {
+	opacity:0.3;
+	filter:alpha(opacity=30);
 }
 .vote_box {
 	margin-top: 7px;
@@ -27,6 +60,12 @@ p {
 .vote_ui {
 	text-decoration: none; 
 	font-size: 1.2em;
+	opacity:0.35;
+	filter:alpha(opacity=35);
+}
+.vote_ui:hover {
+	opacity:1;
+	filter:alpha(opacity=100);
 }
 .vote_up, .vote_up:hover {
 	color: #007500;

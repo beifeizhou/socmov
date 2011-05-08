@@ -22,11 +22,9 @@ FACEBOOK_SECRET_KEY=settings.FACEBOOK_SECRET_KEY 	# change to your facebook app 
 def adhoc_ranking_algorithm(mov_list, user):
 	if not user:
 		return mov_list
-	
 	try:
 		f = user.get_movies_liked_by_friends()
 		Z = Vote.objects.raw('SELECT * FROM fbcon_vote WHERE user_id = %s', [user.uid])
-		
 		ids = []
 		z = []
 		for i in Z:
@@ -34,7 +32,6 @@ def adhoc_ranking_algorithm(mov_list, user):
 		for i in f:
 			ids.append(i.mid)
 		mov_list = list( (set(mov_list) | set(ids)) - set(z) )
-		
 	except Exception, e:
 			logging.exception(e)
 	
@@ -85,6 +82,7 @@ def transform_to_grid(res, user=None):
 			count += 1
 			dic['column'] = count
 			dic['friends'] = user.get_friends_who_like( mov ) if user else None
+			print dic['friends']
 			"""if user:
 				print "Transform to grid : ", len(dic['friends'])
 				for u in dic['friends']:
@@ -161,11 +159,12 @@ def show(request):
 
 def detail_mov(request):
 	params = request.REQUEST
+	profile, friends, likes = get_fb_details(request.COOKIES)
 	if params.get("id"):
 		mov = Movie.getMovieInfo(long(params.get("id")))
-		return render_to_response('movie_detail.html', 
-									mov.get_render_dict()
-								 )
+		values = mov.get_render_dict()
+		values["user"] = profile
+		return render_to_response('movie_detail.html', values) 
 	return render_to_response('index.html')
 
 #for testing alone
@@ -192,11 +191,12 @@ def vote(request):
 	return HttpResponseForbidden("You're not allowed to make this vote. Probably because you've logged out.")
 
 def update_user_movies(request):
-	logging.info("HAAAAAAAAAAAAHA")
 	params = request.REQUEST
 	cookies = request.COOKIES
-	
 	user = get_fb_details(cookies)[0]
 	if user:
-		user.update_movies()
-
+		updated = user.update_movies()
+		status = "updated" if updated else "not updated"
+		status = "User logged in ", status
+		return HttpResponse( status )
+	return HttpResponse("User not logged in")
