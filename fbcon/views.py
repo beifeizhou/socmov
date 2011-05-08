@@ -174,3 +174,13 @@ def vote(request):
 		resp_string = "Vote successfully added for movie ", mov.name , " (", mov.mid ,")"
 		return HttpResponse(resp_string)
 	return HttpResponseForbidden("You're not allowed to make this vote. Probably because you've logged out.")
+
+def update_user_movies(request):
+	logging.info("HAAAAAAAAAAAAHA")
+	params = request.REQUEST
+	cookies = request.COOKIES
+	
+	user = get_fb_details(cookies)[0]
+	if user:
+		user.update_movies()
+

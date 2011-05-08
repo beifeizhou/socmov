@@ -2,6 +2,14 @@
 {% block title %} Your information {% endblock %}
 {% block body %}
 {{ user }}
+<h1> Work History </h1>
+<h3>{{ user.work }}</h3>h3>
+<h1> Education history</h1>
+<h3>{{ user.education }}</h3>
+<h1> Hometown </h1>
+<h3>{{ user.hometown }}</h3>
+<h1> Age </h1>
+<h3>{{ user.get_age }}</h3>
 Welcome {{ user.first_name }} <br>
 <h1> My friends </h1>
 {% for pair in friends %}

@@ -29,6 +29,12 @@ $(document).ready(function(){
 		);
 		return false;
 	});
-
+	$.ajax({
+		url : "/update_user_movies"
+	}).success(
+		function (data) {
+			console.log( data );
+		}
+	);
 });
 
