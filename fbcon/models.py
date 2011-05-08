@@ -325,16 +325,18 @@ class User(models.Model):
 	movie = models.ManyToManyField(Movie, through = "Vote")
 	
 	def update_movies(self):
-		self.last_updated_movies = datetime.now()
-		m = json.loads(self.movies)
-		for i in m:
-			try:
-				M = Movie.search(i["name"])
-				if len(M) < 1:
-					continue
-				self.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
-			except Exception, e:
-				logging.exception(e)
+		if self.last_updated_movies < datetime.now() - timedelta(days = 30):
+			self.last_updated_movies = datetime.now() #update timestamp
+			m = json.loads(self.movies)
+			
+			for i in m:
+				try:
+					M = Movie.search(i["name"])
+					if len(M) < 1:
+						continue
+					self.add_movie( Movie.getMovieInfo(M[0]['id']), 1 )
+				except Exception, e:
+					logging.exception(e)
 	
 	def fetch(id, access_token):
 		id = str(id)
@@ -392,10 +394,6 @@ class User(models.Model):
 		#caching / use cookies maybe needed here
 		u = User.fetch_current(access_token)
 		u.save()
-		
-		#fetch user's FB movie likes, if not cached
-		if u.last_updated_movies < datetime.now() - timedelta(days = 30):
-			u.update_movies()
 			
 		return u
 	get_current = staticmethod(get_current)
@@ -413,10 +411,6 @@ class User(models.Model):
 				return r
 		r = User.fetch(id, access_token)
 		r.save()
-		
-		#fetch user's FB movie likes, if not cached
-		if r.last_updated_movies < datetime.now() - timedelta(days = 30):
-			r.update_movies()
 		
 		return r
 	get_by_id = staticmethod(get_by_id)
