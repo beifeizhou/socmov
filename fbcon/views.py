@@ -128,7 +128,7 @@ def index(request):
 	
 def profile_user(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
-	search_res = profile.get_movie_likes()
+	search_res = profile.get_movie_likes() if profile else []
 	res = []
 	for mov in search_res:
 		res.append(mov.mid)

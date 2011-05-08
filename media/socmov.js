@@ -25,9 +25,11 @@ $(document).ready(function(){
 				block.addClass('greyBox');
 			}
 		).error(
-			function (data) {
+			function (xhr, ajaxOptions, thrownError) {
 				console.log("Something went wrong");
-				console.log(data);
+				console.log(xhr);
+				console.log(ajaxOptions);
+				console.log(thrownError);
 			}
 		);
 		return false;
