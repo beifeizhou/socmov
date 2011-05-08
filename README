@@ -14,8 +14,8 @@ Requirements:
 Installation:
  - Run installer.sh in root folder.
  - Run server_install.sh
-   Command : bash server_install.sh [ipaddress][servername]
-       Eg. : Run "bash server_install.sh 8.8.8.8 google.com" for www.google.com
+   Command : bash server_install.sh [public dns obtained for the amazon ec2 instance or "localhost"(if just using for local apache server) ]
+       Eg. : Run "bash server_install.sh something.amazonaws.com" for something.amazonaws.com ,which is the public dns for a amazon ec2 instance
  - If you wish you may delete the install folder after the installation
  
 
@@ -23,4 +23,3 @@ Running it
  - Run the following:
    python manage.py runserver
    Server runs on port 8000 (http://localhost:8000)
- - 

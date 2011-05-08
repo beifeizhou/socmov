@@ -454,6 +454,23 @@ class User(models.Model):
 		#ret = User.objects.filter(uid__in = ids).filter(vote__movie = mov).filter(vote__rating = 1)
 		return ans
 		
+	def get_movies_liked_by_friends(self):
+		fr = self.get_friends()
+		ids = []
+		ans = []
+		for f in fr:
+			ids.append(f['id'])
+		
+		query = "SELECT * FROM fbcon_movie WHERE mid in (SELECT DISTINCT x.mid FROM fbcon_movie as x, fbcon_user as y, fbcon_vote as z WHERE z.movie_id = x.mid and y.uid = z.user_id and z.rating = 1 and y.uid in (%s"
+		for i in range(1, len(ids)):
+			query = query + ", %s"
+		query = query + ")) and mid not in (SELECT mid from fbcon_movie, fbcon_user, fbcon_vote where fbcon_vote.user_id = %s and fbcon_vote.movie_id = fbcon_movie.mid and fbcon_user.uid = fbcon_vote.user_id and fbcon_vote.rating = 1)"
+		ids.append(self.uid)
+		ret = Movie.objects.raw(query, ids)
+		for i in ret:
+			ans.append(i)
+		return ans
+		
 	def get_movie_likes(self):
 		ret = Movie.objects.raw('SELECT * FROM fbcon_movie WHERE mid in (SELECT mid from fbcon_movie, fbcon_user, fbcon_vote where fbcon_vote.user_id = %s and fbcon_vote.movie_id = fbcon_movie.mid and fbcon_user.uid = fbcon_vote.user_id and fbcon_vote.rating = 1)', [self.uid])
 		ans = []
