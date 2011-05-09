@@ -43,6 +43,14 @@
 			
 		  }
 		});
+		FB.Event.subscribe( 'auth.login', function (response) {
+			if (response.session) {
+				console.log("Logged in auth.login");
+				window.location = "/";
+			} else {
+				
+			}
+		});
     </script>	
 	<div class="header container">
 		<h1>
