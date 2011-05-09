@@ -1,5 +1,8 @@
 
 $(document).ready(function(){
+	//dialogs part
+	
+	
 	$("a[rel='backdrops']").colorbox({transition:"fade", width : "60%" , height:"60%"});
 	$("a[rel='covers']").colorbox({slideshow:true });
 	$(".video").colorbox({iframe:true, innerWidth:425, innerHeight:344});
@@ -29,6 +32,9 @@ $(document).ready(function(){
 				console.log("Something went wrong");
 				if (xhr.status == 403) {
 					console.log("user not logged in :-/");
+					$( "<div title='Not logged in'>You've not logged in.</div>" ).dialog(
+						modal:true;
+					);
 				}
 			}
 		);
