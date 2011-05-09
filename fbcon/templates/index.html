@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block title %} Social Movies - Discover Movies. Socially. {% endblock %}
-{% block body %} 
-
-<script type="text/javascript">
-$('#invFriends').click(function(){
-	FB.ui({	method	: 'apprequests', 
-			message	: 'Discover movies. Socially.', 
-			data	: 'tracking information for the user'});
-});
-</script>
+{% block head %} 
+<meta property="og:title" content="Social Movies"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="http://www.socialmovies.co.cc/"/>
+<meta property="og:image" content="http://socialmovies.co.cc/media/images/logo.png"/>
+<meta property="og:site_name" content="Social Movies"/>
+<meta property="og:description"
+      content="A social way to discover new movies that are cherry-picked for you"/>
+{% endblock %}
+{% block body %}
 {% include "movie_grid.html" with movies=movies %}
 {% endblock %} 

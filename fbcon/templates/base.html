@@ -58,6 +58,8 @@
 				<a href="/">Home</a> 
 				| 
 				<a href="/user">Profile</a>
+				|
+				<a href="#invite_friends" id="invFriends"> <img src="/media/images/invite.png"> Invite your friends</a>
 			</p>			
 		</div>
 		<div class="span-8 last">
@@ -66,14 +68,10 @@
 				<input class="submitBox" type = "submit" value = "Search" />
 			</form>
 		</div>
-		
-		
 		<div class="span-24 last topbarLine2">
 			<p>
 			{% if user %}
 				<span>Welcome, <a href = "/user">{{ user.first_name }}</a></span>
-				| 
-				<a href="#invite_friends" id="invFriends"> <img src="/media/images/invite.png"> Invite your friends</a>
 			{% else %}
 				{% include "fblogin.html" %}
 			{% endif %}

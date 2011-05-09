@@ -1,6 +1,19 @@
 {# renders a movie and takes mov - movie parameter #}
 {% extends "base.html" %}
 {% block title %} {{ mov.name }} {% endblock %}
+{% block head %} 
+<meta property="og:title" content="{{ mov.name }}"/>
+<meta property="og:type" content="movie"/>
+<meta property="og:url" content="http://www.socialmovies.co.cc/movie?id={{ mov.mid }}"/>
+{% for v in posters %}
+	{% if forloop.first %}
+		<meta property="og:image" content="{{ v.url }}"/>
+	{% endif %}
+{% endfor %}
+<meta property="og:site_name" content="Social Movies"/>
+<meta property="og:description"
+      content="{{ mov.tagline }}"/>
+{% endblock %}
 {% block body %}
 {% if mov %}
 <div class="span-24 last">
@@ -29,11 +42,19 @@
 	<div class="span-18 last">
 		<div class="span-18 last">
 			<h1> {{ mov.name }} </h1>
+			<hr>
 			<h2> {{ mov.tagline }} </h2>
 			
-			<h3>{{ mov.rating }} from {{ mov.votes }} </h3>
+			<div class="span-10">
+				{% include "vote.html" with movieid=mov.mid friends=mov.friends %}
+			</div>
+			<div class="span-8 last">
+				<h3>{{ mov.rating }} from {{ mov.votes }} </h3>
+			</div>
+			<hr>
+			<fb:send href="example.com" font="arial"></fb:send>
+			<br>
 			<h3> {{mov.overview}}</h3>
-			{% include "vote.html" with movieid=mov.mid friends=mov.friends %}
 			<br>
 			<br>
 			<br>
