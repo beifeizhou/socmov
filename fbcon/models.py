@@ -434,7 +434,7 @@ class User(models.Model):
 			cursor = connection.cursor()
 			cursor.execute('DELETE FROM fbcon_vote WHERE movie_id = %s and user_id = %s', [mov.mid, self.uid])
 			transaction.commit_unless_managed()
-			#Vote.objects.filter(movie__mid = mov.mid).filter(user__uid = self.uid).delete()
+			#Vote.objects.filter(movie__mid = mov.mid, user__uid = self.uid).delete()
 			#if len(a) > 0:
 				#a.delete()
 			v = Vote(movie = mov, user = self, last_updated = datetime.now(), rating = rating)
@@ -447,32 +447,40 @@ class User(models.Model):
 	def get_friends_who_like(self, mov):
 		try:
 			fr = self.get_friends()
-			ids = [mov.mid]
+			ids = []
 			for f in fr:
-				ids.append(f['id'])
+				z = User.objects.filter(uid=f['id'])
+				if len(z) > 0:
+					ids.append(z[0])
 			
-			ans = []
-			query = "SELECT * FROM fbcon_user, fbcon_vote, fbcon_movie WHERE fbcon_vote.movie_id = fbcon_movie.mid and fbcon_user.uid = fbcon_vote.user_id and fbcon_movie.mid = %s and fbcon_vote.rating = 1 and uid in (%s"
+			"""ans = []
+			query = "SELECT uid from fbcon_user, fbcon_vote, fbcon_movie WHERE fbcon_vote.movie_id = fbcon_movie.mid and fbcon_user.uid = fbcon_vote.user_id and fbcon_movie.mid = %s and fbcon_vote.rating = 1 and uid in (%s"
 			for i in range(2, len(ids)):
 				query = query + ", %s"
 			query = query + ")"
 			ret = User.objects.raw(query, ids)
+			#print ret
 			for i in ret:
 				ans.append(i)
-			#ret = User.objects.filter(uid__in = ids).filter(vote__movie = mov).filter(vote__rating = 1)
+			print "return : ", len(ans)"""
+			ans = User.objects.filter(vote__user__in = ids, vote__movie__mid = mov.mid, vote__rating = 1)
 			return ans
 		except Exception, e:
 			logging.exception(e)
 			return []
-		
+			
 	def get_movies_liked_by_friends(self):
 		try:
 			fr = self.get_friends()
 			ids = []
-			ans = []
 			for f in fr:
-				ids.append(f['id'])
+				#ids.append(f['id'])
+				z = User.objects.filter(uid = f['id'])
+				if len(z) > 0:
+					ids.append(z[0])
+			ans = Movie.objects.filter(vote__user__in = ids, vote__rating = 1)
 			
+			""" ans = []
 			query = "SELECT * FROM fbcon_movie WHERE mid in (SELECT DISTINCT x.mid FROM fbcon_movie as x, fbcon_user as y, fbcon_vote as z WHERE z.movie_id = x.mid and y.uid = z.user_id and z.rating = 1 and y.uid in (%s"
 			for i in range(1, len(ids)):
 				query = query + ", %s"
@@ -480,28 +488,19 @@ class User(models.Model):
 			ids.append(self.uid)
 			ret = Movie.objects.raw(query, ids)
 			for i in ret:
-				ans.append(i)
-			return ans
+				ans.append(i) """
+			return list(set(ans))
 		except Exception, e:
 			logging.exception(e)
 			return []
 		
 	def get_movie_likes(self):
 		try:
-			ret = Movie.objects.raw('SELECT * FROM fbcon_movie WHERE mid in (SELECT mid from fbcon_movie, fbcon_user, fbcon_vote where fbcon_vote.user_id = %s and fbcon_vote.movie_id = fbcon_movie.mid and fbcon_user.uid = fbcon_vote.user_id and fbcon_vote.rating = 1)', [self.uid])
+			"""ret = Movie.objects.raw('SELECT * FROM fbcon_movie WHERE mid in (SELECT mid from fbcon_movie, fbcon_user, fbcon_vote where fbcon_vote.user_id = %s and fbcon_vote.movie_id = fbcon_movie.mid and fbcon_user.uid = fbcon_vote.user_id and fbcon_vote.rating = 1)', [self.uid])
 			ans = []
 			for i in ret:
-				ans.append(i)
-			#ret = Movie.objects.filter(user__uid = self.uid).filter(vote__rating = 1)
-			"""r = []
-			i = 0
-			while i < len(ret):
-				r.append(ret[i])
-				j = i + 1
-				while j < len(ret) and ret[j].mid == ret[i].mid:
-					j = j + 1
-				i = j
-			return r"""
+				ans.append(i)"""
+			ans = Movie.objects.filter(vote__user__uid = self.uid, vote__rating = 1)
 			return ans
 		except Exception, e:
 			logging.exception(e)

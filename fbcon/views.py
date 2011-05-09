@@ -24,11 +24,13 @@ def adhoc_ranking_algorithm(mov_list, user):
 		return mov_list
 	try:
 		f = user.get_movies_liked_by_friends()
-		Z = Vote.objects.raw('SELECT * FROM fbcon_vote WHERE user_id = %s', [user.uid])
+		Z = Vote.objects.filter(user = user).values('movie')
+		#Z = Vote.objects.raw('SELECT * FROM fbcon_vote WHERE user_id = %s', [user.uid])
+		
 		ids = []
 		z = []
 		for i in Z:
-			z.append(i.movie_id)
+			z.append(i['movie'])
 		for i in f:
 			ids.append(i.mid)
 		mov_list = list( (set(mov_list) | set(ids)) - set(z) )
