@@ -445,6 +445,7 @@ class User(models.Model):
 			
 	""" get_friends_like function is used to find all the friends which like the given Movie mov """	
 	def get_friends_who_like(self, mov):
+		#print "inside, for movie : ", mov.name, mov.mid
 		try:
 			fr = self.get_friends()
 			ids = []
@@ -464,6 +465,7 @@ class User(models.Model):
 				ans.append(i)
 			print "return : ", len(ans)"""
 			ans = User.objects.filter(vote__user__in = ids, vote__movie__mid = mov.mid, vote__rating = 1)
+			#print "Return : ", len(ans)
 			return ans
 		except Exception, e:
 			logging.exception(e)

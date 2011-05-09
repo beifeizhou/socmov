@@ -84,6 +84,7 @@ def transform_to_grid(res, user=None):
 			count += 1
 			dic['column'] = count
 			dic['friends'] = user.get_friends_who_like( mov ) if user else None
+			#print "LENGTH OF FRIENDS : ", len(dic['friends'])
 			"""if user:
 				print "Transform to grid : ", len(dic['friends'])
 				for u in dic['friends']:
