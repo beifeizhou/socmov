@@ -5,7 +5,6 @@
 <meta property="og:title" content="{{ mov.name }}"/>
 <meta property="og:type" content="movie"/>
 <meta property="og:url" content="http://socialmovies.co.cc/movie?id={{ mov.mid }}"/>
-<meta property="fb:app_id" content="203674192998057" />
 
 {% for v in posters %}
 	{% if forloop.first %}
@@ -54,7 +53,7 @@
 				<h3>{{ mov.rating }} from {{ mov.votes }} </h3>
 			</div>
 			<hr>
-			<fb:send href="http://socialmovies.co.cc/movie?id={{ mov.mid }}" font="arial"></fb:send>
+			<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:send href="http://socialmovies.co.cc/movie?id={{ mov.mid }}" font="arial"></fb:send>
 			<br>
 			<h3> {{mov.overview}}</h3>
 			<br>
