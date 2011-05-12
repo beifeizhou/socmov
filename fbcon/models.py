@@ -591,10 +591,9 @@ class MovieBrowser(models.Model):
 	
 	
 	def browse(order_by="rating", order="desc", top_x=12, min_votes = 70, genre=[]):
-		
 		idx = order_by , "#", order , "#", top_x , "#", min_votes , "#", genre
 		idx = str(idx)
-		print "browsing invoked with params", idx
+		#print "browsing invoked with params", idx
 		res = MovieBrowser.objects.filter(id=idx)
 		cached = True
 		if len(res) == 0:
@@ -604,9 +603,9 @@ class MovieBrowser(models.Model):
 			if res.last_fetched < datetime.now() - timedelta(hours=6):
 				cached = False
 			else:
-				print "returning cached values"
+				#print "returning cached values"
 				return res.decode()
-		print "uncached searching again"
+		#print "uncached searching again"
 		search_res = Movie.browse(order_by=order_by, order=order, top_x=top_x, min_votes = min_votes, genre=genre) 
 		ids = []
 		for mov in search_res:
