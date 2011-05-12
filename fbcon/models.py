@@ -1,5 +1,7 @@
 from django.db import models, connection, transaction
 from datetime import *	
+import sys
+import subprocess
 import urllib
 import urllib2
 import json
@@ -368,16 +370,16 @@ class User(models.Model):
 					gender = profile.get('gender'),
 					uid = profile.get('id'),
 					hometown = profile.get('hometown'),
-					languages = profile.get('languages'),
+					languages = json.dumps(profile.get('languages')),
 					link = profile.get('link'),
-					interested_in = profile.get('interested_in'),
-					relationship_status = profile.get('relationship_state'),
+					interested_in = json.dumps(profile.get('interested_in')),
+					relationship_status = profile.get('relationship_status'),
 					religion = profile.get('religion'),
 					photo_url = 'http://todo.com',
 					birthday = birthday,
-					education = profile.get('education'),
-					political = profile.get('political'),
-					work = profile.get('work'),
+					education = json.dumps(profile.get('education')),
+					political = json.dumps(profile.get('political')),
+					work = json.dumps(profile.get('work')),
 					friends = json.dumps(friends),
 					movies = json.dumps(likes),
 					last_fetched = datetime.now(),
@@ -512,6 +514,65 @@ class User(models.Model):
 		if self.birthday == None:
 			return None
 		return (date.today() - self.birthday).days / 365.0
+		
+	def convert_to_libsvm(self):
+		gender = self.gender if self.gender else ""
+		relationship_status = self.relationship_status if self.relationship_status else ""
+		interested_in = ""
+		languages_spoken = ""
+		education = ""
+		work = "0"
+		age = ""
+		hi = 0
+		col = 0
+		grad = 0
+		
+		
+		try:
+			for i in json.loads(self.interested_in):
+				interested_in = interested_in + i + " "
+		except Exception, e:
+			pass
+		
+		try:
+			for i in json.loads(self.languages):
+				languages_spoken = languages_spoken + i['name'] + " "
+		except Exception, e:
+			pass
+			
+		try:
+			for i in json.loads(self.education):
+				x = i['type']
+				if x == 'High School':
+					hi = 1
+				if x == 'College':
+					col = 1
+				if x == 'Graduate School':
+					grad = 1
+		except Exception, e:
+			pass
+				
+		education = str(grad) + " " + str(col) + " " + str(hi)
+		try:
+			work = str(len(json.loads(self.work)))
+		except Exception, e:
+			pass
+		if self.get_age():
+			age = str(self.get_age())
+	
+		"""print "Gender : ", gender
+		print "Rel Stat : ", relationship_status
+		print "int in : ", interested_in
+		print "languages : ", languages_spoken
+		print "education : ", education
+		print "work : ", work
+		print "Age : ", age"""
+		
+		process = subprocess.Popen('/home/purav/Desktop/socmov/svm/svm', shell=False, stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+		input = gender + "\n" + relationship_status + "\n" + interested_in + "\n" + languages_spoken + "\n" + education + "\n" + work + "\n" + age
+		output = process.communicate(input)
+		#print output[0]
+		return output[0]
 
 class Vote(models.Model):
 	movie = models.ForeignKey(Movie)
