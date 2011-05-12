@@ -11,6 +11,7 @@ body {
 	border-left: 20px black solid;
 	border-right: 20px black solid;
 }
+<<<<<<< Updated upstream
 .header h3, .header h1, .header a {
 	color: white; text-decoration: none;
 }
@@ -78,4 +79,9 @@ input.queryBox {
 	font-weight: 900;
 }
 
-
+.header h3, .header h1 {
+	color: white;
+}
+.rating {
+	font-size:15px;
+}
