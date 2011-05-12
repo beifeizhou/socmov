@@ -32,9 +32,9 @@ $(document).ready(function(){
 				console.log("Something went wrong");
 				if (xhr.status == 403) {
 					console.log("user not logged in :-/");
-					$( "<div title='Not logged in'>You've not logged in.</div>" ).dialog(
-						modal:true;
-					);
+					$( "<div title='Not logged in'>You've not logged in.</div>" ).dialog({
+						modal:true
+					});
 				}
 			}
 		);

@@ -118,11 +118,7 @@ def get_fb_details(cookies):
 
 def index(request):
 	profile, friends, likes = get_fb_details(request.COOKIES)
-	search_res = Movie.browse(order_by="rating", order="desc", top_x=12, min_votes = 70, genre=[]) 
-	res = []
-	
-	for mov in search_res:
-		res.append( mov.get("id") )
+	res = MovieBrowser.browse(order_by="rating", order="desc", top_x=12, min_votes = 70, genre=[]) 
 	res = adhoc_ranking_algorithm(res, profile)
 	res = res[0:30]
 	movies = transform_to_grid(res, user=profile)

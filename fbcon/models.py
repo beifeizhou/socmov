@@ -518,3 +518,37 @@ class Vote(models.Model):
 	user = models.ForeignKey(User)
 	last_updated = models.DateTimeField()
 	rating = models.IntegerField()
+
+
+class MovieBrowser(models.Model):
+	id = models.CharField(max_length=128, primary_key=True)
+	text = models.TextField(null=True)
+	last_fetched = models.DateTimeField()
+	
+	def decode(self):
+		return json.loads(self.text)
+	
+	
+	def browse(order_by="rating", order="desc", top_x=12, min_votes = 70, genre=[]):
+		idx = order_by , "#", order , "#", top_x , "#", min_votes , "#", genre
+		idx = str(idx)
+		res = MovieBrowser.objects.filter(id=idx)
+		cached = True
+		if len(res) == 0:
+			cached = False
+		else:
+			res = res[0]
+			if res.last_fetched < datetime.now() - timedelta(hours=6):
+				cached = False
+			else:
+				return res.decode()
+		search_res = Movie.browse(order_by="rating", order="desc", top_x=12, min_votes = 70, genre=[]) 
+		ids = []
+		for mov in search_res:
+			ids.append( mov.get("id") )
+		res = MovieBrowser( id = idx, 
+							text = json.dumps(ids),
+							last_fetched = datetime.now() )
+		res.save()
+		return ids
+	browse = staticmethod(browse) 
